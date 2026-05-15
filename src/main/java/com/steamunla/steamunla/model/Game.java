@@ -9,6 +9,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
 @Entity
@@ -21,6 +24,7 @@ public class Game {
     private Long id;
 
     @Column(nullable = false)
+    @NotBlank(message = "El título es obligatorio")
     private String title;
 
     @Column(length = 2000)
@@ -28,10 +32,13 @@ public class Game {
 
     private String genre;
 
+    @NotNull(message = "El precio es obligatorio")
+    @PositiveOrZero(message = "El precio no puede ser negativo")
     private Double price;
 
     private String imageUrl;
 
+    @NotBlank(message = "El nombre del desarrollador es obligatorio")
     private String developerName;  // nombre de la empresa desarrolladora
 
     @ManyToOne

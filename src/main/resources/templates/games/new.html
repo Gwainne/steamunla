@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicar juego — SteamUNLA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #1b2440 0%, #0e1117 45%, #090c12 100%);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+        }
+        a { color: inherit; text-decoration: none; }
+        .shell { max-width: 1100px; margin: 0 auto; padding: 24px; }
+        .topbar {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #2a3347;
+        }
+        .brand {
+            font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700;
+            letter-spacing: 2px; color: #4d9fff;
+        }
+        .ghost-link {
+            border: 1px solid #2a3347; padding: 10px 14px; border-radius: 8px; color: #cbd5e1;
+            background: rgba(22, 27, 38, 0.8);
+        }
+        .hero {
+            display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; align-items: start;
+        }
+        .panel {
+            background: rgba(22, 27, 38, 0.92); border: 1px solid #2a3347; border-radius: 18px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35); overflow: hidden;
+        }
+        .intro { padding: 32px; }
+        .intro h1 {
+            margin: 0 0 12px; font-family: 'Rajdhani', sans-serif; font-size: 3rem; line-height: 0.95;
+        }
+        .intro p { margin: 0; color: #94a3b8; line-height: 1.7; max-width: 60ch; }
+        .badge {
+            display: inline-flex; margin-bottom: 16px; padding: 6px 12px; border-radius: 999px;
+            background: rgba(77, 159, 255, 0.15); color: #93c5fd; font-size: 0.8rem; letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        form { padding: 32px; display: grid; gap: 16px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        label { display: block; margin-bottom: 8px; font-size: 0.82rem; color: #94a3b8; }
+        input, textarea {
+            width: 100%; background: #0f1420; color: #e2e8f0; border: 1px solid #2a3347; border-radius: 10px;
+            padding: 12px 14px; font: inherit; outline: none;
+        }
+        input:focus, textarea:focus { border-color: #4d9fff; }
+        textarea { min-height: 130px; resize: vertical; }
+        .errors { color: #fca5a5; font-size: 0.85rem; margin-top: 6px; }
+        .actions { display: flex; gap: 12px; align-items: center; margin-top: 8px; }
+        .primary {
+            border: 0; border-radius: 10px; padding: 14px 20px; cursor: pointer; font-weight: 700;
+            background: linear-gradient(135deg, #4d9fff, #2d6cdf); color: white;
+        }
+        .secondary { color: #94a3b8; }
+        .full { grid-column: 1 / -1; }
+        @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="shell">
+    <div class="topbar">
+        <div class="brand">STEAMUNLA</div>
+        <a class="ghost-link" th:href="@{/games}">Ver juegos publicados</a>
+    </div>
+
+    <div class="hero">
+        <div class="panel intro">
+            <div class="badge">Publicar juegos</div>
+            <h1>Subí un juego nuevo al catálogo.</h1>
+            <p>
+                Completá los datos básicos del juego y la app lo guarda en MySQL como una publicación activa.
+                Más adelante esto se puede conectar al usuario logueado y a la subida real de archivos.
+            </p>
+        </div>
+
+        <div class="panel">
+            <form th:action="@{/games}" th:object="${game}" method="post">
+                <div>
+                    <label for="title">Título</label>
+                    <input id="title" type="text" th:field="*{title}" placeholder="Ej: Solar Raid">
+                    <div class="errors" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                </div>
+
+                <div>
+                    <label for="developerName">Desarrollador</label>
+                    <input id="developerName" type="text" th:field="*{developerName}" placeholder="Ej: Studio Nova">
+                    <div class="errors" th:if="${#fields.hasErrors('developerName')}" th:errors="*{developerName}"></div>
+                </div>
+
+                <div class="grid full">
+                    <div>
+                        <label for="genre">Género</label>
+                        <input id="genre" type="text" th:field="*{genre}" placeholder="Acción, RPG, estrategia...">
+                    </div>
+                    <div>
+                        <label for="price">Precio</label>
+                        <input id="price" type="number" step="0.01" min="0" th:field="*{price}" placeholder="0.00">
+                        <div class="errors" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="imageUrl">URL de portada</label>
+                    <input id="imageUrl" type="text" th:field="*{imageUrl}" placeholder="https://...">
+                </div>
+
+                <div>
+                    <label for="description">Descripción</label>
+                    <textarea id="description" th:field="*{description}" placeholder="Contá de qué trata el juego..."></textarea>
+                </div>
+
+                <div class="actions">
+                    <button class="primary" type="submit">Publicar juego</button>
+                    <a class="secondary" th:href="@{/games}">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
