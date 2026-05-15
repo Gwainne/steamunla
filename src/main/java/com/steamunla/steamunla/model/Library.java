@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "library")
+@Table(name = "user_library")
 @Data
 public class Library {
     
