@@ -368,23 +368,7 @@
         .btn-outline:hover { border-color: var(--text); color: var(--text); }
     </style>
 </head>
-<script>
-    function downloadAndInstall(event, element) {
-        event.preventDefault();
-        const installUrl = element.getAttribute('href');
-        const downloadUrl = element.getAttribute('data-download-url');
 
-        // Dispara la descarga del txt
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.click();
-
-        // Redirige para refrescar la página y cambiar el botón
-        setTimeout(() => {
-            window.location.href = installUrl;
-        }, 500);
-    }
-</script>
 <body>
  
 <!-- NAV -->
@@ -521,6 +505,95 @@
  
     </main>
 </div>
- 
+    <script>
+        // ==========================================
+        // FILTROS DE INSTALACIÓN
+        // ==========================================
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const gameCards = document.querySelectorAll('.game-card');
+        const sidebarItems = document.querySelectorAll('.game-list-item');
+
+        function applyFilter(filter) {
+            gameCards.forEach((card, index) => {
+                const isInstalled = card.querySelector('.installed-badge') !== null;
+                let visible = false;
+
+                if (filter === 'Todos') {
+                    visible = true;
+                } else if (filter === 'Instalados') {
+                    visible = isInstalled;
+                } else if (filter === 'No instalados') {
+                    visible = !isInstalled;
+                }
+
+                card.style.display = visible ? 'block' : 'none';
+                // Sincroniza el sidebar
+                if (sidebarItems[index]) {
+                    sidebarItems[index].style.display = visible ? 'flex' : 'none';
+                }
+            });
+        }
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                applyFilter(btn.textContent.trim());
+            });
+        });
+
+        // ==========================================
+        // BUSCADOR
+        // ==========================================
+        const searchInput = document.querySelector('.search-input');
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+
+            gameCards.forEach((card, index) => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const visible = title.includes(query);
+                card.style.display = visible ? 'block' : 'none';
+                if (sidebarItems[index]) {
+                    sidebarItems[index].style.display = visible ? 'flex' : 'none';
+                }
+            });
+        });
+
+        // ==========================================
+        // SIDEBAR — click muestra solo ese juego
+        // ==========================================
+        sidebarItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                // Marca como seleccionado
+                sidebarItems.forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+
+                // Muestra solo la card de ese juego, oculta las demás
+                gameCards.forEach((card, i) => {
+                    card.style.display = i === index ? 'block' : 'none';
+                });
+
+                // Scroll a la card
+                if (gameCards[index]) {
+                    gameCards[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        });
+
+        // ==========================================
+        // DESCARGA + INSTALACIÓN
+        // ==========================================
+        function downloadAndInstall(event, element) {
+            event.preventDefault();
+            const installUrl = element.getAttribute('href');
+            const downloadUrl = element.getAttribute('data-download-url');
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.click();
+            setTimeout(() => {
+                window.location.href = installUrl;
+            }, 500);
+        }
+    </script>
 </body>
 </html>
