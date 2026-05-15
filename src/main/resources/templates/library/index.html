@@ -368,6 +368,23 @@
         .btn-outline:hover { border-color: var(--text); color: var(--text); }
     </style>
 </head>
+<script>
+    function downloadAndInstall(event, element) {
+        event.preventDefault();
+        const installUrl = element.getAttribute('href');
+        const downloadUrl = element.getAttribute('data-download-url');
+
+        // Dispara la descarga del txt
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.click();
+
+        // Redirige para refrescar la página y cambiar el botón
+        setTimeout(() => {
+            window.location.href = installUrl;
+        }, 500);
+    }
+</script>
 <body>
  
 <!-- NAV -->
@@ -393,7 +410,7 @@
             juegos
         </div>
         <div>
-            <strong th:text="${library.stream().filter(l -> l.installed).count()}">0</strong>
+            <strong th:text="${installedCount}">0</strong>
             instalados
         </div>
     </div>
@@ -471,25 +488,32 @@
                     </div>
  
                     <div class="card-actions">
-                        <!-- Si NO está instalado: mostrar descargar -->
-                        <a th:unless="${entry.installed}"
-                           th:href="@{/library/download/{id}(id=${entry.game.id})}"
-                           class="btn btn-primary">
-                            ⬇ Descargar
-                        </a>
- 
-                        <!-- Si está instalado: mostrar jugar -->
-                        <button th:if="${entry.installed}"
-                                class="btn btn-success">
-                            ▶ Jugar
-                        </button>
- 
-                        <!-- Ver detalle siempre visible -->
-                        <a th:href="@{/games/{id}(id=${entry.game.id})}"
-                           class="btn btn-outline">
-                            Ver detalle
+                    <!-- Si NO está instalado -->
+                    <div th:unless="${entry.installed}" style="display: flex; gap: 0.5rem; flex: 1;">
+                        <a th:href="@{/library/install/{id}(id=${entry.game.id})}"
+                        th:data-download-url="@{/library/download/{id}(id=${entry.game.id})}"
+                        class="btn btn-primary" style="flex: 1;"
+                        onclick="downloadAndInstall(event, this)">
+                            ⬇ Instalar
                         </a>
                     </div>
+
+                    <!-- Si está instalado -->
+                    <div th:if="${entry.installed}" style="display: flex; gap: 0.5rem; flex: 1;">
+                        <button class="btn btn-success" style="flex: 1;">▶ Jugar</button>
+                        <a th:href="@{/library/uninstall/{id}(id=${entry.game.id})}"
+                        class="btn btn-outline"
+                        style="flex: 1; color: var(--danger); border-color: var(--danger);">
+                            ✕ Desinstalar
+                        </a>
+                    </div>
+
+                    <!-- Ver detalle siempre visible -->
+                    <a th:href="@{/games/{id}(id=${entry.game.id})}"
+                    class="btn btn-outline">
+                        Ver detalle
+                    </a>
+
                 </div>
  
             </div>

@@ -86,4 +86,14 @@ public class LibraryService {
             .contentLength(bytes.length)
             .body(resource);
     }
+
+    public Library uninstallGame(User user, Game game) {
+    Library entry = libraryRepository.findByUserAndGame(user, game)
+            .orElseThrow(() -> new RuntimeException("El juego no está en la biblioteca"));
+
+    entry.setInstalled(false);
+    return libraryRepository.save(entry);
+    }
+
+
 }

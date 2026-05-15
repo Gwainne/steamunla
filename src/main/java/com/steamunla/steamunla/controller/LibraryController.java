@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.steamunla.steamunla.model.Game;
 import com.steamunla.steamunla.model.Library;
 import com.steamunla.steamunla.model.User;
+import com.steamunla.steamunla.repository.GameRepository;
+import com.steamunla.steamunla.repository.UserRepository;
 import com.steamunla.steamunla.service.LibraryService;
 
 @Controller
@@ -21,38 +23,71 @@ public class LibraryController {
     @Autowired
     private LibraryService libraryService;
 
-    // Muestra la biblioteca del usuario
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private GameRepository gameRepository;
+
     @GetMapping
     public String showLibrary(Model model) {
 
-        // TODO: reemplazar por usuario logueado cuando Lara termine el login
-        // Principal principal → userService.findByUsername(principal.getName())
-        User mockUser = new User();
-        mockUser.setId(1L);
-        mockUser.setUsername("matiA");
+        User mockUser = userRepository.findByUsername("matiA")
+                .orElseThrow(() -> new RuntimeException("Usuario mock no encontrado"));
 
         List<Library> library = libraryService.getLibraryByUser(mockUser);
+        
+        // Contar instalados en Java, no en Thymeleaf
+        long installedCount = library.stream()
+                .filter(Library::isInstalled)
+                .count();
+
         model.addAttribute("library", library);
         model.addAttribute("user", mockUser);
+        model.addAttribute("installedCount", installedCount); // agregás esto
 
-        return "library/index"; // apunta a templates/library/index.html
+        return "library/index";
     }
 
-    // Descarga e instala un juego
+    // Marca un juego como instalado
+    @GetMapping("/install/{gameId}")
+    public String installGame(@PathVariable Long gameId) {
+
+        User mockUser = userRepository.findByUsername("matiA")
+                .orElseThrow(() -> new RuntimeException("Usuario mock no encontrado"));
+
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new RuntimeException("Juego no encontrado"));
+
+        libraryService.markAsInstalled(mockUser, game);
+
+        return "redirect:/library";
+    }
+    // Descarga el juego, lo marca como instalado 
     @GetMapping("/download/{gameId}")
     public ResponseEntity<Resource> downloadGame(@PathVariable Long gameId) {
 
+        User mockUser = userRepository.findByUsername("matiA")
+                .orElseThrow(() -> new RuntimeException("Usuario mock no encontrado"));
+
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new RuntimeException("Juego no encontrado"));
+
+        return libraryService.downloadGameFile(mockUser, game);
+    }
+
+    @GetMapping("/uninstall/{gameId}")
+    public String uninstallGame(@PathVariable Long gameId) {
+
         // TODO: reemplazar por usuario logueado
-        User mockUser = new User();
-        mockUser.setId(1L);
-        mockUser.setUsername("matiA");
+        User mockUser = userRepository.findByUsername("matiA")
+                .orElseThrow(() -> new RuntimeException("Usuario mock no encontrado"));
 
-        // TODO: reemplazar por gameService.findById cuando Mati P termine
-        Game mockGame = new Game();
-        mockGame.setId(gameId);
-        mockGame.setTitle("Juego " + gameId);
-        mockGame.setDeveloperName("Desarrollador");
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new RuntimeException("Juego no encontrado"));
 
-        return libraryService.downloadGameFile(mockUser, mockGame);
+        libraryService.uninstallGame(mockUser, game);
+
+        return "redirect:/library";
     }
 }
