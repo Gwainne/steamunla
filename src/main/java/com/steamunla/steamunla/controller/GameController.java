@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.steamunla.steamunla.model.Game;
+import com.steamunla.steamunla.model.User;
+import com.steamunla.steamunla.repository.UserRepository;
 import com.steamunla.steamunla.service.GameService;
 import jakarta.validation.Valid;
 
@@ -20,9 +22,18 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    private User getMockUser() {
+        return userRepository.findByUsername("matiA")
+                .orElseThrow(() -> new RuntimeException("Usuario mock no encontrado"));
+    }
+
     @GetMapping
     public String listGames(Model model) {
         model.addAttribute("games", gameService.getAllGames());
+        model.addAttribute("user", getMockUser());
         return "games/index";
     }
 
@@ -31,6 +42,7 @@ public class GameController {
         if (!model.containsAttribute("game")) {
             model.addAttribute("game", new Game());
         }
+        model.addAttribute("user", getMockUser());
         return "games/new";
     }
 

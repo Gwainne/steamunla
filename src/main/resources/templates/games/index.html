@@ -6,11 +6,57 @@
     <title>Juegos publicados — SteamUNLA</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0; min-height: 100vh; background: #0e1117; color: #e2e8f0;
-            font-family: 'Inter', sans-serif;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0e1117;
+            --surface: #161b26;
+            --surface2: #1e2536;
+            --border: #2a3347;
+            --accent: #4d9fff;
+            --accent-dim: #1a3a5c;
+            --green: #4ade80;
+            --green-dim: #14532d;
+            --text: #e2e8f0;
+            --muted: #64748b;
         }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            min-height: 100vh;
+        }
+        a { color: inherit; text-decoration: none; }
+        nav {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-logo {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 2px;
+            text-decoration: none;
+        }
+        .nav-links { display: flex; gap: 1.5rem; }
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--text); }
         .wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 40px; }
         .head {
             display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 24px;
@@ -55,10 +101,23 @@
     </style>
 </head>
 <body>
+<nav>
+    <a href="/" class="nav-logo">STEAMUNLA</a>
+    <div class="nav-links">
+        <a href="/games">Tienda</a>
+        <a href="/games/new">Publicar juego</a>
+        <a href="/library" class="active">Biblioteca</a>
+        <a href="/wishlist">Lista de deseados</a>
+    </div>
+    <div class="nav-links">
+        <a href="#" th:text="'Hola, ' + ${user.username}">Hola, usuario</a>
+        <a href="/logout">Salir</a>
+    </div>
+</nav>
+
 <div class="wrap">
     <div class="head">
         <div>
-            <div class="brand">STEAMUNLA</div>
             <h1 class="title">Juegos publicados</h1>
             <p class="subtitle">Acá ves los juegos que se guardaron desde el formulario de publicación.</p>
         </div>
