@@ -148,6 +148,27 @@
                 </div>
                 <p class="desc" th:text="${game.description != null and !#strings.isEmpty(game.description) ? game.description : 'Sin descripción'}"></p>
                 <div class="price" th:text="${'$' + #numbers.formatDecimal(game.price != null ? game.price : 0, 1, 2)}"></div>
+                
+                <div class="meta" style="margin-top:12px;">
+                    <span class="tag">
+                        ⭐ <span th:text="${game.averageRating != null ? game.averageRating : 0}"></span>
+                    </span>
+                </div>
+
+                <div class="actions" style="margin-top:14px;">
+                    <a class="btn primary" th:href="@{/purchase/{id}(id=${game.id})}">
+                        Comprar
+                    </a>
+
+                    <a class="btn" th:href="@{/reviews/{id}(id=${game.id})}">
+                        Reseñar
+                    </a>
+                </div>
+
+
+
+
+
             </div>
         </article>
     </div>
