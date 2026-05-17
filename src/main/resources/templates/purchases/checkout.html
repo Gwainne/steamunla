@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Comprar juego</title>
+</head>
+<body>
+    <h1>Comprar juego</h1>
+
+    <h2 th:text="${game.title}"></h2>
+    <p th:text="${'$' + game.price}"></p>
+
+    <form th:action="@{/purchase/{id}(id=${game.id})}" method="post">
+        <label>Método de pago:</label>
+
+        <select name="paymentMethod">
+            <option value="CREDIT_CARD">Tarjeta de crédito</option>
+            <option value="DEBIT_CARD">Tarjeta de débito</option>
+        </select>
+
+        <button type="submit">Comprar</button>
+    </form>
+</body>
+</html>
