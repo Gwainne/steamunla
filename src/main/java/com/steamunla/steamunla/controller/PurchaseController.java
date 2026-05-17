@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.*;
 
 import com.steamunla.steamunla.model.Game;
 import com.steamunla.steamunla.model.User;
-import com.steamunla.steamunla.repository.UserRepository;
 import com.steamunla.steamunla.service.GameService;
 import com.steamunla.steamunla.service.PurchaseService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/purchase")
@@ -21,35 +22,47 @@ public class PurchaseController {
     @Autowired
     private GameService gameService;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    private User getMockUser() {
-        return userRepository.findByUsername("matiA").orElseThrow();
+    private User getLoggedUser(HttpSession session) {
+        return (User) session.getAttribute("loggedUser");
     }
 
     @GetMapping("/{gameId}")
-    public String showCheckout(@PathVariable Long gameId, Model model) {
+    public String showCheckout(@PathVariable Long gameId, Model model, HttpSession session) {
+
+        User user = getLoggedUser(session);
+
+        if (user == null) {
+            return "redirect:/login";
+        }
 
         Game game = gameService.getGameById(gameId);
 
         model.addAttribute("game", game);
+        model.addAttribute("user", user);
 
         return "purchases/checkout";
     }
 
     @PostMapping("/{gameId}")
-public String buyGame(@PathVariable Long gameId,
-                      @RequestParam String paymentMethod,
-                      org.springframework.ui.Model model) {
+    public String buyGame(@PathVariable Long gameId,
+                          @RequestParam String paymentMethod,
+                          Model model,
+                          HttpSession session) {
 
-    Game game = gameService.getGameById(gameId);
+        User user = getLoggedUser(session);
 
-    purchaseService.buyGame(getMockUser(), game, paymentMethod);
+        if (user == null) {
+            return "redirect:/login";
+        }
 
-    model.addAttribute("game", game);
-    model.addAttribute("paymentMethod", paymentMethod);
+        Game game = gameService.getGameById(gameId);
 
-    return "purchase-success";
-}
+        purchaseService.buyGame(user, game, paymentMethod);
+
+        model.addAttribute("game", game);
+        model.addAttribute("paymentMethod", paymentMethod);
+        model.addAttribute("user", user);
+
+        return "purchase-success";
+    }
 }
