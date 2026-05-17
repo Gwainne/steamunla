@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registro - SteamUNLA</title>
+
+    <style>
+
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background: #040814;
+            color: white;
+        }
+
+        nav{
+            width: 100%;
+            height: 70px;
+            background: #111827;
+            border-bottom: 1px solid #1f2937;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 40px;
+        }
+
+        .logo{
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 35px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .container{
+            width: 100%;
+            min-height: calc(100vh - 70px);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 40px;
+        }
+
+        .register-card{
+            width: 100%;
+            max-width: 500px;
+
+            background: #111827;
+
+            border: 1px solid #1f2937;
+            border-radius: 20px;
+
+            padding: 40px;
+
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .register-card h1{
+            margin-bottom: 10px;
+            font-size: 40px;
+        }
+
+        .register-card p{
+            color: #9ca3af;
+            margin-bottom: 30px;
+        }
+
+        .form-group{
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .form-group label{
+            margin-bottom: 8px;
+            color: #d1d5db;
+        }
+
+        .form-group input{
+            background: #1f2937;
+            border: 1px solid #374151;
+
+            height: 50px;
+
+            border-radius: 12px;
+
+            padding: 0 15px;
+
+            color: white;
+            font-size: 15px;
+        }
+
+        .form-group input:focus{
+            outline: none;
+            border: 1px solid #60a5fa;
+        }
+
+        .btn-register{
+            width: 100%;
+            height: 50px;
+
+            border: none;
+            border-radius: 12px;
+
+            background: #3b82f6;
+
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .btn-register:hover{
+            background: #2563eb;
+        }
+
+        .login-link{
+            margin-top: 25px;
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        .login-link a{
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<nav>
+    <a href="/" class="logo">STEAMUNLA</a>
+</nav>
+
+<div class="container">
+
+    <div class="register-card">
+
+        <h1>Crear Cuenta</h1>
+        <p>Registrate para comenzar a comprar y administrar tus juegos.</p>
+
+        <form th:action="@{/register}" th:object="${user}" method="post">
+
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" th:field="*{username}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" th:field="*{email}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" th:field="*{password}" required>
+            </div>
+
+            <button type="submit" class="btn-register">
+                Registrarse
+            </button>
+
+        </form>
+
+        <div class="login-link">
+            ¿Ya tenés cuenta?
+            <a href="/login">Iniciá sesión</a>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

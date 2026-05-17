@@ -109,10 +109,15 @@
         <a href="/library" class="active">Biblioteca</a>
         <a href="/wishlist">Lista de deseados</a>
     </div>
-    <div class="nav-links">
-        <a href="#" th:text="'Hola, ' + ${user.username}">Hola, usuario</a>
-        <a href="/logout">Salir</a>
-    </div>
+    <div class="nav-links" th:if="${user != null}">
+    <a href="#" th:text="'Hola, ' + ${user.username}">Hola, usuario</a>
+    <a href="/logout">Salir</a>
+</div>
+
+<div class="nav-links" th:if="${user == null}">
+    <a href="/login">Ingresar</a>
+    <a href="/register">Registrarse</a>
+</div>
 </nav>
 
 <div class="wrap">
