@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Compra realizada</title>
+
+<style>
+body{
+    background:#0e1117;
+    color:white;
+    font-family:Arial;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.card{
+    background:#161b26;
+    padding:40px;
+    border-radius:16px;
+    text-align:center;
+    width:420px;
+}
+.btn{
+    display:inline-block;
+    margin-top:20px;
+    padding:12px 18px;
+    background:#4d9fff;
+    color:white;
+    border-radius:8px;
+    text-decoration:none;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h1>✅ Compra realizada</h1>
+
+    <p>
+        Compraste:
+        <strong th:text="${game.title}"></strong>
+    </p>
+
+    <p>
+        Método de pago:
+        <strong th:text="${paymentMethod}"></strong>
+    </p>
+
+    <p>
+        El juego fue agregado a tu biblioteca.
+    </p>
+
+    <a href="/library" class="btn">
+        Ir a biblioteca
+    </a>
+</div>
+
+</body>
+</html>

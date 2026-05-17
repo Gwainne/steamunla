@@ -2,6 +2,7 @@ package com.steamunla.steamunla.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.steamunla.steamunla.model.Game;
@@ -27,14 +28,28 @@ public class PurchaseController {
         return userRepository.findByUsername("matiA").orElseThrow();
     }
 
-    @PostMapping("/{gameId}")
-    public String buyGame(@PathVariable Long gameId,
-                          @RequestParam String paymentMethod) {
+    @GetMapping("/{gameId}")
+    public String showCheckout(@PathVariable Long gameId, Model model) {
 
         Game game = gameService.getGameById(gameId);
 
-        purchaseService.buyGame(getMockUser(), game, paymentMethod);
+        model.addAttribute("game", game);
 
-        return "redirect:/library";
+        return "purchases/checkout";
     }
+
+    @PostMapping("/{gameId}")
+public String buyGame(@PathVariable Long gameId,
+                      @RequestParam String paymentMethod,
+                      org.springframework.ui.Model model) {
+
+    Game game = gameService.getGameById(gameId);
+
+    purchaseService.buyGame(getMockUser(), game, paymentMethod);
+
+    model.addAttribute("game", game);
+    model.addAttribute("paymentMethod", paymentMethod);
+
+    return "purchase-success";
+}
 }

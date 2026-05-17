@@ -150,20 +150,60 @@
                 <div class="price" th:text="${'$' + #numbers.formatDecimal(game.price != null ? game.price : 0, 1, 2)}"></div>
                 
                 <div class="meta" style="margin-top:12px;">
-                    <span class="tag">
-                        ⭐ <span th:text="${game.averageRating != null ? game.averageRating : 0}"></span>
-                    </span>
-                </div>
+    <span class="tag">
+        ⭐ <span th:text="${game.averageRating != null ? game.averageRating : 0}"></span>/5
+    </span>
+</div>
 
-                <div class="actions" style="margin-top:14px;">
-                    <a class="btn primary" th:href="@{/purchase/{id}(id=${game.id})}">
-                        Comprar
-                    </a>
+<div class="actions" style="margin-top:14px; display:flex; flex-direction:column; gap:12px;">
 
-                    <a class="btn" th:href="@{/reviews/{id}(id=${game.id})}">
-                        Reseñar
-                    </a>
-                </div>
+    <!-- Comprar -->
+    <form th:action="@{/purchase/{id}(id=${game.id})}" method="post"
+          style="display:flex; gap:8px;">
+
+        <select name="paymentMethod"
+                style="flex:1; padding:10px; border-radius:8px; border:1px solid #2a3347; background:#1e2536; color:white;">
+            <option value="Tarjeta">Tarjeta</option>
+            <option value="MercadoPago">MercadoPago</option>
+            <option value="PayPal">PayPal</option>
+        </select>
+
+        <button type="submit" class="btn primary">
+            Comprar
+        </button>
+    </form>
+
+    <!-- Reseña -->
+    <details>
+        <summary class="btn" style="cursor:pointer;">
+            Escribir reseña
+        </summary>
+
+        <form th:action="@{/reviews/{id}(id=${game.id})}" method="post"
+              style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+
+            <input type="number"
+                   name="rating"
+                   min="1"
+                   max="5"
+                   required
+                   placeholder="Puntaje (1-5)"
+                   style="padding:10px; border-radius:8px; border:1px solid #2a3347; background:#1e2536; color:white;">
+
+            <input type="text"
+                   name="comment"
+                   placeholder="Comentario"
+                   style="padding:10px; border-radius:8px; border:1px solid #2a3347; background:#1e2536; color:white;">
+
+            <button type="submit" class="btn">
+                Enviar reseña
+            </button>
+
+        </form>
+    </details>
+
+</div>
+
 
 
 
