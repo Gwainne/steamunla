@@ -1,15 +1,21 @@
+
 package com.steamunla.steamunla;
 
 import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
 import com.steamunla.steamunla.model.Game;
 import com.steamunla.steamunla.model.Library;
 import com.steamunla.steamunla.model.User;
+import com.steamunla.steamunla.model.GameUpdate;
+
 import com.steamunla.steamunla.repository.GameRepository;
 import com.steamunla.steamunla.repository.LibraryRepository;
 import com.steamunla.steamunla.repository.UserRepository;
+import com.steamunla.steamunla.repository.GameUpdateRepository;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -23,11 +29,18 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private GameRepository gameRepository;
 
+    @Autowired
+    private GameUpdateRepository gameUpdateRepository;
+
     @Override
     public void run(String... args) {
+
+        // 🔥 CAMBIALO A true SI QUERES RESETEAR SIEMPRE LOS DATOS
         if (libraryRepository.count() == 0) {
 
-            // Guarda el usuario primero en la BD
+            // =========================
+            // 👤 USER
+            // =========================
             User user = new User();
             user.setUsername("matiA");
             user.setEmail("matia@steamunla.com");
@@ -35,9 +48,11 @@ public class DataInitializer implements CommandLineRunner {
             user.setRole("USER");
             user.setActive(true);
             user.setCreatedAt(LocalDateTime.now());
-            user = userRepository.save(user); // ahora tiene ID real
+            user = userRepository.save(user);
 
-            // Guarda los juegos en la BD
+            // =========================
+            // 🎮 GAME 1
+            // =========================
             Game game1 = new Game();
             game1.setTitle("Counter Strike 2");
             game1.setDeveloperName("Valve");
@@ -45,8 +60,26 @@ public class DataInitializer implements CommandLineRunner {
             game1.setPrice(0.0);
             game1.setActive(true);
             game1.setCreatedAt(LocalDateTime.now());
-            game1 = gameRepository.save(game1); // ahora tiene ID real
+            game1 = gameRepository.save(game1);
 
+            // 🧩 UPDATE 1
+            GameUpdate update1 = new GameUpdate();
+            update1.setGame(game1);
+            update1.setVersion("1.0.1");
+            update1.setPatchNotes("Mejora de rendimiento, optimización de servidores y fixes de bugs.");
+            update1.setReleaseDate(LocalDateTime.now());
+            gameUpdateRepository.save(update1);
+
+            GameUpdate update2 = new GameUpdate();
+            update2.setGame(game1);
+            update2.setVersion("1.0.2");
+            update2.setPatchNotes("Balance de armas y ajustes en matchmaking.");
+            update2.setReleaseDate(LocalDateTime.now());
+            gameUpdateRepository.save(update2);
+
+            // =========================
+            // 🎮 GAME 2
+            // =========================
             Game game2 = new Game();
             game2.setTitle("Elden Ring");
             game2.setDeveloperName("FromSoftware");
@@ -54,9 +87,19 @@ public class DataInitializer implements CommandLineRunner {
             game2.setPrice(59.99);
             game2.setActive(true);
             game2.setCreatedAt(LocalDateTime.now());
-            game2 = gameRepository.save(game2); // ahora tiene ID real
+            game2 = gameRepository.save(game2);
 
-            // Ahora sí guarda la biblioteca con referencias reales
+            // 🧩 UPDATE 2
+            GameUpdate update3 = new GameUpdate();
+            update3.setGame(game2);
+            update3.setVersion("1.0.1");
+            update3.setPatchNotes("Corrección de bugs y mejoras de estabilidad.");
+            update3.setReleaseDate(LocalDateTime.now());
+            gameUpdateRepository.save(update3);
+
+            // =========================
+            // 📚 LIBRARY
+            // =========================
             Library entry1 = new Library();
             entry1.setUser(user);
             entry1.setGame(game1);

@@ -1,0 +1,27 @@
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Updates</title>
+</head>
+<body>
+
+<h1 th:text="'Updates de ' + ${game.title}"></h1>
+
+<div th:if="${updates.isEmpty()}">
+    <p>No hay parches todavía</p>
+</div>
+
+<ul>
+    <li th:each="u : ${updates}">
+        <b th:text="${u.version}"></b>
+        - <span th:text="${u.patchNotes}"></span>
+        - <span th:text="${u.releaseDate}"></span>
+    </li>
+</ul>
+
+</body>
+</html>
+
+
