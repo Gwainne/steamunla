@@ -1,27 +1,110 @@
 
-
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Updates</title>
+    <meta charset="UTF-8">
+    <title>Actualizaciones — SteamUNLA</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background: #0e1117;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+
+        nav {
+            background: #161b26;
+            padding: 12px 24px;
+            border-bottom: 1px solid #2a3347;
+        }
+
+        .wrap {
+            max-width: 1000px;
+            margin: auto;
+            padding: 24px;
+        }
+
+        h1 {
+            font-family: 'Rajdhani', sans-serif;
+            color: #4d9fff;
+        }
+
+        .game-title {
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #161b26;
+            border: 1px solid #2a3347;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .version {
+            color: #4d9fff;
+            font-weight: 700;
+        }
+
+        .date {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .notes {
+            margin-top: 8px;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        .empty {
+            color: #64748b;
+            padding: 40px;
+            border: 1px dashed #2a3347;
+            text-align: center;
+            border-radius: 12px;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1 th:text="'Updates de ' + ${game.title}"></h1>
+<nav>
+    <a href="/" style="color:#4d9fff;font-weight:700;text-decoration:none;">STEAMUNLA</a>
+</nav>
 
-<div th:if="${updates.isEmpty()}">
-    <p>No hay parches todavía</p>
+<div class="wrap">
+
+    <h1>Actualizaciones</h1>
+
+    <div class="game-title">
+        Juego: <span th:text="${game.title}">Nombre juego</span>
+    </div>
+
+    <div th:if="${#lists.isEmpty(updates)}" class="empty">
+        Este juego todavía no tiene parches publicados.
+    </div>
+
+    <div th:each="u : ${updates}" class="card">
+        <div class="version">
+            Versión <span th:text="${u.version}">1.0.0</span>
+        </div>
+
+        <div class="date" th:text="${u.releaseDate}">
+            Fecha
+        </div>
+
+        <div class="notes" th:text="${u.patchNotes}">
+            Notas del parche
+        </div>
+    </div>
+
 </div>
-
-<ul>
-    <li th:each="u : ${updates}">
-        <b th:text="${u.version}"></b>
-        - <span th:text="${u.patchNotes}"></span>
-        - <span th:text="${u.releaseDate}"></span>
-    </li>
-</ul>
 
 </body>
 </html>
-
 

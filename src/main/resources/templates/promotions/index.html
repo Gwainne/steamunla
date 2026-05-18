@@ -1,29 +1,105 @@
-
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Promociones</title>
+    <meta charset="UTF-8">
+    <title>Promociones — SteamUNLA</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background: #0e1117;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+
+        nav {
+            background: #161b26;
+            padding: 12px 24px;
+            border-bottom: 1px solid #2a3347;
+        }
+
+        .wrap {
+            max-width: 1000px;
+            margin: auto;
+            padding: 24px;
+        }
+
+        h1 {
+            font-family: 'Rajdhani', sans-serif;
+            color: #4d9fff;
+        }
+
+        .card {
+            background: #161b26;
+            border: 1px solid #2a3347;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .discount {
+            font-size: 22px;
+            font-weight: 700;
+            color: #4ade80;
+        }
+
+        .desc {
+            color: #cbd5e1;
+            margin-top: 6px;
+        }
+
+        .date {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        .empty {
+            color: #64748b;
+            padding: 40px;
+            border: 1px dashed #2a3347;
+            text-align: center;
+            border-radius: 12px;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>Promociones activas</h1>
+<nav>
+    <a href="/" style="color:#4d9fff;font-weight:700;text-decoration:none;">STEAMUNLA</a>
+</nav>
 
-<div th:if="${promotions.empty}">
-    No hay promociones activas
-</div>
+<div class="wrap">
 
-<div th:each="promo : ${promotions}">
+    <h1>Promociones</h1>
 
-    <h2 th:text="${promo.game.title}"></h2>
+    <div th:if="${#lists.isEmpty(promotions)}" class="empty">
+        No hay promociones activas en este momento.
+    </div>
 
-    <p>
-        Descuento:
-        <span th:text="${promo.discountPercent}"></span>%
-    </p>
+    <div th:each="p : ${promotions}" class="card">
 
-    <p th:text="${promo.description}"></p>
+        <div class="discount">
+            -<span th:text="${p.discountPercent}">0</span>% OFF
+        </div>
+
+        <div class="desc" th:text="${p.description}">
+            Descripción promo
+        </div>
+
+        <div class="date">
+            Desde <span th:text="${p.startDate}"></span>
+            hasta <span th:text="${p.endDate}"></span>
+        </div>
+
+    </div>
 
 </div>
 
 </body>
 </html>
+
+
