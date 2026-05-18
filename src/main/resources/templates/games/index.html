@@ -162,21 +162,36 @@
 
 <div class="actions" style="margin-top:14px; display:flex; flex-direction:column; gap:12px;">
 
-    <!-- Comprar -->
-    <form th:action="@{/purchase/{id}(id=${game.id})}" method="post"
-          style="display:flex; gap:8px;">
+    <!-- Ver detalle -->
+    <a th:href="@{/games/{id}(id=${game.id})}" class="btn" style="text-align:center;">
+        Ver detalle
+    </a>
 
-        <select name="paymentMethod"
-                style="flex:1; padding:10px; border-radius:8px; border:1px solid #2a3347; background:#1e2536; color:white;">
-            <option value="Tarjeta">Tarjeta</option>
-            <option value="MercadoPago">MercadoPago</option>
-            <option value="PayPal">PayPal</option>
-        </select>
+    <!-- Comprar o Ya en biblioteca -->
+    <th:block th:if="${#sets.contains(ownedGameIds, game.id)}">
+        <!-- Si el usuario ya tiene el juego -->
+        <div style="background: rgba(74, 222, 128, 0.12); border: 1px solid rgba(74, 222, 128, 0.35); color: #bbf7d0; padding: 10px 12px; border-radius: 8px; text-align: center; font-size: 0.9rem;">
+            ✓ Ya en biblioteca
+        </div>
+    </th:block>
 
-        <button type="submit" class="btn primary">
-            Comprar
-        </button>
-    </form>
+    <th:block th:unless="${#sets.contains(ownedGameIds, game.id)}">
+        <!-- Si el usuario no tiene el juego -->
+        <form th:action="@{/purchases/checkout/{id}(id=${game.id})}" method="get"
+              style="display:flex; gap:8px;">
+
+            <select name="paymentMethod"
+                    style="flex:1; padding:10px; border-radius:8px; border:1px solid #2a3347; background:#1e2536; color:white;">
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="MercadoPago">MercadoPago</option>
+                <option value="PayPal">PayPal</option>
+            </select>
+
+            <button type="submit" class="btn primary">
+                Comprar
+            </button>
+        </form>
+    </th:block>
 
     <!-- Reseña -->
     <details>

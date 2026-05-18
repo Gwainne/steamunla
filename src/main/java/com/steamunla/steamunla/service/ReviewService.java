@@ -34,6 +34,15 @@ public class ReviewService {
         return saved;
     }
 
+    /**
+     * Obtiene todas las reseñas de un juego
+     * @param game el juego
+     * @return lista de reseñas del juego
+     */
+    public List<Review> getReviewsByGame(Game game) {
+        return reviewRepository.findByGame(game);
+    }
+
     private void updateAverage(Game game) {
 
         List<Review> reviews = reviewRepository.findByGame(game);

@@ -9,11 +9,13 @@ import com.steamunla.steamunla.model.Game;
 import com.steamunla.steamunla.model.User;
 import com.steamunla.steamunla.service.GameService;
 import com.steamunla.steamunla.service.PurchaseService;
+import com.steamunla.steamunla.service.LibraryService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/purchase")
+@RequestMapping("/purchases")
 public class PurchaseController {
 
     @Autowired
@@ -22,12 +24,15 @@ public class PurchaseController {
     @Autowired
     private GameService gameService;
 
+    @Autowired
+    private LibraryService libraryService;
+
     private User getLoggedUser(HttpSession session) {
         return (User) session.getAttribute("loggedUser");
     }
 
-    @GetMapping("/{gameId}")
-    public String showCheckout(@PathVariable Long gameId, Model model, HttpSession session) {
+    @GetMapping("/checkout/{gameId}")
+    public String showCheckout(@PathVariable Long gameId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
 
         User user = getLoggedUser(session);
 
@@ -36,6 +41,12 @@ public class PurchaseController {
         }
 
         Game game = gameService.getGameById(gameId);
+
+        // Verificar si el usuario ya compró este juego
+        if (purchaseService.hasUserAlreadyBoughtGame(user, game)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Ya has comprado este juego. Accede a tu biblioteca para jugarlo.");
+            return "redirect:/games/" + gameId;
+        }
 
         model.addAttribute("game", game);
         model.addAttribute("user", user);
@@ -43,11 +54,12 @@ public class PurchaseController {
         return "purchases/checkout";
     }
 
-    @PostMapping("/{gameId}")
-    public String buyGame(@PathVariable Long gameId,
+    @PostMapping("/confirm")
+    public String buyGame(@RequestParam Long gameId,
                           @RequestParam String paymentMethod,
                           Model model,
-                          HttpSession session) {
+                          HttpSession session,
+                          RedirectAttributes redirectAttributes) {
 
         User user = getLoggedUser(session);
 
@@ -57,12 +69,30 @@ public class PurchaseController {
 
         Game game = gameService.getGameById(gameId);
 
-        purchaseService.buyGame(user, game, paymentMethod);
+        try {
+            purchaseService.buyGame(user, game, paymentMethod);
 
-        model.addAttribute("game", game);
-        model.addAttribute("paymentMethod", paymentMethod);
+            redirectAttributes.addFlashAttribute("game", game);
+            redirectAttributes.addFlashAttribute("paymentMethod", paymentMethod);
+
+            return "redirect:/purchases/success";
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/games/" + gameId;
+        }
+    }
+
+    @GetMapping("/success")
+    public String showSuccess(Model model, HttpSession session) {
+
+        User user = getLoggedUser(session);
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
         model.addAttribute("user", user);
 
-        return "purchase-success";
+        return "purchases/purchase-success";
     }
 }

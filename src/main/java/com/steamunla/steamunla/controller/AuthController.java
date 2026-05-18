@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.steamunla.steamunla.model.User;
 import com.steamunla.steamunla.service.UserService;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -63,6 +65,13 @@ public String logout(HttpSession session) {
     session.invalidate();
 
     return "redirect:/login";
+}
+
+@GetMapping("/session-test")
+@ResponseBody
+public String testSession(HttpSession session) {
+    User u = (User) session.getAttribute("loggedUser");
+    return u != null ? "Usuario en sesión: " + u.getUsername() : "Sesión vacía";
 }
 
 }

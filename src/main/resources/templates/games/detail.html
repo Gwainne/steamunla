@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${game.title}">Detalle del juego — SteamUNLA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0e1117;
+            --surface: #161b26;
+            --surface2: #1e2536;
+            --border: #2a3347;
+            --accent: #4d9fff;
+            --accent-dim: #1a3a5c;
+            --green: #4ade80;
+            --green-dim: #14532d;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            min-height: 100vh;
+        }
+        a { color: inherit; text-decoration: none; }
+        nav {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-logo {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 2px;
+            text-decoration: none;
+        }
+        .nav-links { display: flex; gap: 1.5rem; }
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--text); }
+        .wrap { max-width: 1000px; margin: 0 auto; padding: 28px 24px 40px; }
+        .header {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .cover-section {
+            flex-shrink: 0;
+        }
+        .cover {
+            width: 280px;
+            height: 360px;
+            background: linear-gradient(135deg, #1e2536, #0f1420);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            overflow: hidden;
+        }
+        .cover img { width: 100%; height: 100%; object-fit: cover; }
+        .info-section { flex: 1; }
+        .title { margin: 0 0 8px; font-family: 'Rajdhani', sans-serif; font-size: 2.5rem; }
+        .subtitle { color: var(--muted); margin-bottom: 16px; }
+        .meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+        .tag {
+            font-size: 0.75rem;
+            color: #93c5fd;
+            background: rgba(77, 159, 255, 0.14);
+            border: 1px solid rgba(77, 159, 255, 0.24);
+            border-radius: 999px;
+            padding: 4px 10px;
+        }
+        .description { color: #94a3b8; line-height: 1.8; margin-bottom: 20px; }
+        .price { font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--green); margin-bottom: 20px; }
+        .rating-section {
+            background: rgba(77, 159, 255, 0.08);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .rating-value { font-size: 2rem; font-weight: 700; color: var(--accent); }
+        .rating-text { color: var(--muted); font-size: 0.9rem; }
+        .actions { display: flex; gap: 12px; flex-direction: column; }
+        .btn {
+            border-radius: 10px;
+            padding: 12px 16px;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            color: #e2e8f0;
+            background: #161b26;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: #1e2536; }
+        .btn.primary {
+            background: linear-gradient(135deg, #4d9fff, #2d6cdf);
+            border-color: transparent;
+        }
+        .btn.primary:hover {
+            background: linear-gradient(135deg, #6baaff, #3d7cef);
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        .reviews-section {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .reviews-title { font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; margin-bottom: 20px; }
+        .reviews-list { display: flex; flex-direction: column; gap: 16px; }
+        .review {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+        .review-user { font-weight: 600; }
+        .review-rating {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .review-comment { color: #94a3b8; line-height: 1.6; }
+        .review-date { color: var(--muted); font-size: 0.85rem; margin-top: 8px; }
+        .no-reviews { color: var(--muted); text-align: center; padding: 40px 20px; }
+        .error-notice {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #fca5a5;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .owned-message {
+            background: rgba(74, 222, 128, 0.12);
+            border: 1px solid rgba(74, 222, 128, 0.35);
+            color: #bbf7d0;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="nav-logo">STEAMUNLA</a>
+    <div class="nav-links">
+        <a href="/games">Tienda</a>
+        <a href="/games/new">Publicar juego</a>
+        <a href="/library" class="active">Biblioteca</a>
+        <a href="/wishlist">Lista de deseados</a>
+    </div>
+    <div class="nav-links" th:if="${user != null}">
+        <a href="#" th:text="'Hola, ' + ${user.username}">Hola, usuario</a>
+        <a href="/logout">Salir</a>
+    </div>
+    <div class="nav-links" th:if="${user == null}">
+        <a href="/login">Ingresar</a>
+        <a href="/register">Registrarse</a>
+    </div>
+</nav>
+
+<div class="wrap">
+    <a href="/games" class="back-link">← Volver a la tienda</a>
+
+    <div class="header">
+        <div class="cover-section">
+            <div class="cover">
+                <img th:if="${game.imageUrl != null and !#strings.isEmpty(game.imageUrl)}" 
+                     th:src="${game.imageUrl}" th:alt="${game.title}">
+                <span th:if="${game.imageUrl == null or #strings.isEmpty(game.imageUrl)}">Sin portada</span>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h1 class="title" th:text="${game.title}">Nombre del juego</h1>
+            <p class="subtitle" th:text="${game.developerName}">Desarrollador</p>
+
+            <div class="meta">
+                <span class="tag" th:text="${game.genre != null and !#strings.isEmpty(game.genre) ? game.genre : 'Sin género'}">Género</span>
+                <span class="tag" th:if="${game.releaseDate != null}" 
+                      th:text="${#dates.format(game.releaseDate, 'dd/MM/yyyy')}">Fecha de lanzamiento</span>
+            </div>
+
+            <p class="description" th:text="${game.description != null and !#strings.isEmpty(game.description) ? game.description : 'Sin descripción disponible'}">
+                Descripción del juego
+            </p>
+
+            <div class="price" th:text="${'$' + #numbers.formatDecimal(game.price != null ? game.price : 0, 1, 2)}">
+                $9.99
+            </div>
+
+            <div class="rating-section">
+                <div class="rating-value" th:text="${game.averageRating != null ? game.averageRating : 0}">0</div>
+                <div class="rating-text">Calificación promedio</div>
+            </div>
+
+            <!-- Mostrar errorMessage si existe -->
+            <div class="error-notice" th:if="${errorMessage}">
+                ❌ <span th:text="${errorMessage}"></span>
+            </div>
+
+            <div class="actions">
+                <!-- Si el usuario ya tiene el juego -->
+                <div class="owned-message" th:if="${alreadyOwned}">
+                    ✓ Ya tenés este juego en tu biblioteca
+                </div>
+
+                <!-- Botón de compra si no lo tiene -->
+                <form th:action="@{/purchases/checkout/{id}(id=${game.id})}" method="get" th:if="!${alreadyOwned}">
+                    <button type="submit" class="btn primary" style="width: 100%;">
+                        Comprar ahora
+                    </button>
+                </form>
+
+                <!-- Si no lo tiene, mostrar botón de ir a biblioteca, si lo tiene -->
+                <a href="/library" class="btn primary" style="text-align: center;" th:if="${alreadyOwned}">
+                    Ir a mi biblioteca
+                </a>
+
+                <!-- Botón para seguir explorando -->
+                <a href="/games" class="btn" style="text-align: center;" th:unless="${alreadyOwned}">Seguir explorando</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="reviews-section">
+        <h2 class="reviews-title">Reseñas de la comunidad</h2>
+        
+        <div class="reviews-list" th:if="${!#lists.isEmpty(reviews)}">
+            <article class="review" th:each="review : ${reviews}">
+                <div class="review-header">
+                    <div>
+                        <div class="review-user" th:text="${review.user.username}">Usuario</div>
+                        <div class="review-date" th:text="${#dates.format(review.createdAt, 'dd/MM/yyyy HH:mm')}">
+                            Fecha
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <span th:text="${'⭐ ' + review.rating}">⭐ 5</span>
+                    </div>
+                </div>
+                <p class="review-comment" th:text="${review.comment != null ? review.comment : 'Sin comentario'}">
+                    Comentario
+                </p>
+            </article>
+        </div>
+
+        <div class="no-reviews" th:if="${#lists.isEmpty(reviews)}">
+            Todavía no hay reseñas para este juego. ¡Sé el primero en dejar tu opinión!
+        </div>
+    </div>
+</div>
+</body>
+</html>
