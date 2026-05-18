@@ -1,4 +1,3 @@
-
 package com.steamunla.steamunla;
 
 import java.time.LocalDateTime;
@@ -9,16 +8,21 @@ import org.springframework.stereotype.Component;
 
 import com.steamunla.steamunla.model.Game;
 import com.steamunla.steamunla.model.Library;
+import com.steamunla.steamunla.model.Promotion;
 import com.steamunla.steamunla.model.User;
 import com.steamunla.steamunla.model.GameUpdate;
 
 import com.steamunla.steamunla.repository.GameRepository;
 import com.steamunla.steamunla.repository.LibraryRepository;
+import com.steamunla.steamunla.repository.PromotionRepository;
 import com.steamunla.steamunla.repository.UserRepository;
 import com.steamunla.steamunla.repository.GameUpdateRepository;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
+
+@Autowired
+    private PromotionRepository promotionRepository;
 
     @Autowired
     private LibraryRepository libraryRepository;
@@ -35,8 +39,8 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        // 🔥 CAMBIALO A true SI QUERES RESETEAR SIEMPRE LOS DATOS
-        if (libraryRepository.count() == 0) {
+        // ✅ CORRECTO: solo corre si no hay juegos
+        if (gameRepository.count() == 0) {
 
             // =========================
             // 👤 USER
@@ -62,7 +66,7 @@ public class DataInitializer implements CommandLineRunner {
             game1.setCreatedAt(LocalDateTime.now());
             game1 = gameRepository.save(game1);
 
-            // 🧩 UPDATE 1
+            // 🧩 GAME 1 UPDATES
             GameUpdate update1 = new GameUpdate();
             update1.setGame(game1);
             update1.setVersion("1.0.1");
@@ -89,7 +93,7 @@ public class DataInitializer implements CommandLineRunner {
             game2.setCreatedAt(LocalDateTime.now());
             game2 = gameRepository.save(game2);
 
-            // 🧩 UPDATE 2
+            // 🧩 GAME 2 UPDATES
             GameUpdate update3 = new GameUpdate();
             update3.setGame(game2);
             update3.setVersion("1.0.1");
@@ -113,6 +117,18 @@ public class DataInitializer implements CommandLineRunner {
             entry2.setInstalled(false);
             entry2.setAddedAt(LocalDateTime.now());
             libraryRepository.save(entry2);
+
+            Promotion promo1 = new Promotion();
+            promo1.setDescription("Oferta de verano");
+            promo1.setDiscountPercent(50.0);
+            promo1.setActive(true);
+            promo1.setStartDate(LocalDateTime.now());
+            promo1.setEndDate(LocalDateTime.now().plusDays(7));
+            promo1.setGame(game1);
+
+            promotionRepository.save(promo1);
+
         }
     }
 }
+

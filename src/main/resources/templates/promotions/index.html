@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Promociones</title>
+</head>
+<body>
+
+<h1>Promociones activas</h1>
+
+<div th:if="${promotions.empty}">
+    No hay promociones activas
+</div>
+
+<div th:each="promo : ${promotions}">
+
+    <h2 th:text="${promo.game.title}"></h2>
+
+    <p>
+        Descuento:
+        <span th:text="${promo.discountPercent}"></span>%
+    </p>
+
+    <p th:text="${promo.description}"></p>
+
+</div>
+
+</body>
+</html>

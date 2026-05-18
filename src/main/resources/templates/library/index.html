@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca — SteamUNLA</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         :root {
             --bg:         #0e1117;
             --surface:    #161b26;
@@ -21,7 +27,7 @@
             --muted:      #64748b;
             --danger:     #f87171;
         }
- 
+
         body {
             background: var(--bg);
             color: var(--text);
@@ -29,7 +35,7 @@
             font-size: 14px;
             min-height: 100vh;
         }
- 
+
         /* NAV */
         nav {
             background: var(--surface);
@@ -43,7 +49,7 @@
             top: 0;
             z-index: 100;
         }
- 
+
         .nav-logo {
             font-family: 'Rajdhani', sans-serif;
             font-size: 1.5rem;
@@ -52,8 +58,12 @@
             letter-spacing: 2px;
             text-decoration: none;
         }
- 
-        .nav-links { display: flex; gap: 1.5rem; }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
         .nav-links a {
             color: var(--muted);
             text-decoration: none;
@@ -62,8 +72,12 @@
             letter-spacing: 0.5px;
             transition: color 0.2s;
         }
-        .nav-links a:hover, .nav-links a.active { color: var(--text); }
- 
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text);
+        }
+
         /* HEADER */
         .page-header {
             padding: 2.5rem 2rem 1.5rem;
@@ -72,24 +86,25 @@
             align-items: flex-end;
             justify-content: space-between;
         }
- 
+
         .page-header h1 {
             font-family: 'Rajdhani', sans-serif;
             font-size: 2rem;
             font-weight: 700;
             letter-spacing: 1px;
-            color: var(--text);
         }
- 
-        .page-header h1 span { color: var(--accent); }
- 
+
+        .page-header h1 span {
+            color: var(--accent);
+        }
+
         .library-stats {
             display: flex;
             gap: 2rem;
             color: var(--muted);
             font-size: 0.8rem;
         }
- 
+
         .library-stats strong {
             display: block;
             font-size: 1.4rem;
@@ -97,7 +112,7 @@
             font-weight: 700;
             color: var(--text);
         }
- 
+
         /* FILTERS */
         .filters {
             padding: 1rem 2rem;
@@ -106,7 +121,7 @@
             align-items: center;
             border-bottom: 1px solid var(--border);
         }
- 
+
         .filter-btn {
             background: transparent;
             border: 1px solid var(--border);
@@ -115,16 +130,16 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.8rem;
-            font-family: 'Inter', sans-serif;
             transition: all 0.2s;
         }
- 
-        .filter-btn:hover, .filter-btn.active {
+
+        .filter-btn:hover,
+        .filter-btn.active {
             border-color: var(--accent);
             color: var(--accent);
             background: var(--accent-dim);
         }
- 
+
         .search-input {
             margin-left: auto;
             background: var(--surface2);
@@ -132,29 +147,23 @@
             color: var(--text);
             padding: 0.4rem 1rem;
             border-radius: 4px;
-            font-size: 0.85rem;
-            font-family: 'Inter', sans-serif;
             width: 220px;
             outline: none;
-            transition: border-color 0.2s;
         }
- 
-        .search-input:focus { border-color: var(--accent); }
-        .search-input::placeholder { color: var(--muted); }
- 
-        /* MAIN LAYOUT */
+
+        /* MAIN */
         .main {
             display: grid;
             grid-template-columns: 220px 1fr;
             min-height: calc(100vh - 56px - 80px);
         }
- 
+
         /* SIDEBAR */
         .sidebar {
             border-right: 1px solid var(--border);
             padding: 1.5rem 1rem;
         }
- 
+
         .sidebar-title {
             font-size: 0.7rem;
             font-weight: 600;
@@ -164,7 +173,7 @@
             margin-bottom: 0.75rem;
             padding-left: 0.5rem;
         }
- 
+
         .game-list-item {
             display: flex;
             align-items: center;
@@ -175,13 +184,16 @@
             transition: background 0.15s;
             border: 1px solid transparent;
         }
- 
-        .game-list-item:hover { background: var(--surface2); }
+
+        .game-list-item:hover {
+            background: var(--surface2);
+        }
+
         .game-list-item.selected {
             background: var(--accent-dim);
             border-color: var(--accent);
         }
- 
+
         .game-thumb {
             width: 36px;
             height: 36px;
@@ -191,78 +203,52 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
-            flex-shrink: 0;
             overflow: hidden;
         }
- 
-        .game-thumb img { width: 100%; height: 100%; object-fit: cover; }
- 
+
+        .game-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .game-list-name {
             font-size: 0.82rem;
             font-weight: 500;
-            line-height: 1.3;
-            color: var(--text);
         }
- 
+
         .installed-dot {
             width: 6px;
             height: 6px;
             border-radius: 50%;
             background: var(--green);
             margin-left: auto;
-            flex-shrink: 0;
         }
- 
+
         /* CONTENT */
-        .content { padding: 2rem; }
- 
-        /* EMPTY STATE */
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 5rem 2rem;
-            color: var(--muted);
-            text-align: center;
-            gap: 1rem;
+        .content {
+            padding: 2rem;
         }
- 
-        .empty-state .icon { font-size: 3rem; opacity: 0.3; }
-        .empty-state p { font-size: 0.9rem; max-width: 300px; line-height: 1.6; }
-        .empty-state a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 500;
-        }
- 
-        /* GAME CARDS GRID */
+
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1rem;
         }
- 
+
         .game-card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 6px;
             overflow: hidden;
-            transition: border-color 0.2s, transform 0.2s;
-            animation: fadeIn 0.3s ease both;
+            transition: 0.2s;
         }
- 
+
         .game-card:hover {
             border-color: var(--accent);
             transform: translateY(-2px);
         }
- 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
- 
+
         .card-image {
             width: 100%;
             height: 140px;
@@ -270,14 +256,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
-            color: var(--border);
             overflow: hidden;
             position: relative;
         }
- 
-        .card-image img { width: 100%; height: 100%; object-fit: cover; }
- 
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .installed-badge {
             position: absolute;
             top: 8px;
@@ -286,37 +274,34 @@
             border: 1px solid var(--green);
             color: var(--green);
             font-size: 0.65rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
             padding: 2px 8px;
             border-radius: 3px;
         }
- 
-        .card-body { padding: 1rem; }
- 
+
+        .card-body {
+            padding: 1rem;
+        }
+
         .card-title {
             font-family: 'Rajdhani', sans-serif;
             font-size: 1.1rem;
             font-weight: 700;
-            letter-spacing: 0.5px;
             margin-bottom: 0.25rem;
-            color: var(--text);
         }
- 
+
         .card-dev {
             font-size: 0.75rem;
             color: var(--muted);
             margin-bottom: 0.75rem;
         }
- 
+
         .card-meta {
             display: flex;
             gap: 0.5rem;
             margin-bottom: 1rem;
             flex-wrap: wrap;
         }
- 
+
         .tag {
             background: var(--surface2);
             border: 1px solid var(--border);
@@ -325,276 +310,262 @@
             padding: 2px 8px;
             border-radius: 3px;
         }
- 
-        .card-actions { display: flex; gap: 0.5rem; }
- 
+
+        .card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
         .btn {
             flex: 1;
             padding: 0.5rem;
             border-radius: 4px;
             font-size: 0.8rem;
             font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            border: none;
-            text-align: center;
             text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            transition: all 0.2s;
-            letter-spacing: 0.3px;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
         }
- 
+
         .btn-primary {
             background: var(--accent);
-            color: #fff;
+            color: white;
         }
-        .btn-primary:hover { background: #3b8fe8; }
- 
+
         .btn-success {
             background: var(--green-dim);
-            color: var(--green);
             border: 1px solid var(--green);
+            color: var(--green);
         }
-        .btn-success:hover { background: #166534; }
- 
+
         .btn-outline {
             background: transparent;
-            color: var(--muted);
             border: 1px solid var(--border);
+            color: var(--muted);
         }
-        .btn-outline:hover { border-color: var(--text); color: var(--text); }
+
+        .btn-outline:hover {
+            border-color: var(--text);
+            color: var(--text);
+        }
     </style>
 </head>
 
 <body>
- 
+
 <!-- NAV -->
 <nav>
     <a href="/" class="nav-logo">STEAMUNLA</a>
+
     <div class="nav-links">
         <a href="/games">Tienda</a>
         <a href="/games/new">Publicar juego</a>
         <a href="/library" class="active">Biblioteca</a>
         <a href="/wishlist">Lista de deseados</a>
+        <a href="/promotions">Promociones</a>
     </div>
+
     <div class="nav-links">
-        <a href="#" th:text="'Hola, ' + ${user.username}">Hola, usuario</a>
+        <a href="#" th:text="'Hola, ' + ${user.username}">Hola usuario</a>
         <a href="/logout">Salir</a>
     </div>
 </nav>
- 
-<!-- PAGE HEADER -->
+
+<!-- HEADER -->
 <div class="page-header">
     <h1>Mi <span>Biblioteca</span></h1>
+
     <div class="library-stats">
         <div>
             <strong th:text="${library.size()}">0</strong>
             juegos
         </div>
+
         <div>
             <strong th:text="${installedCount}">0</strong>
             instalados
         </div>
     </div>
 </div>
- 
+
 <!-- FILTERS -->
 <div class="filters">
     <button class="filter-btn active">Todos</button>
     <button class="filter-btn">Instalados</button>
     <button class="filter-btn">No instalados</button>
+
     <input type="text" class="search-input" placeholder="Buscar en biblioteca...">
 </div>
- 
+
 <!-- MAIN -->
 <div class="main">
- 
+
     <!-- SIDEBAR -->
     <aside class="sidebar">
+
         <div class="sidebar-title">Juegos</div>
- 
-        <!-- Lista vacía -->
-        <div th:if="${library.empty}" style="color: var(--muted); font-size: 0.8rem; padding: 0.5rem;">
+
+        <div th:if="${library.empty}"
+             style="color: var(--muted); font-size: 0.8rem; padding: 0.5rem;">
             Tu biblioteca está vacía
         </div>
- 
-        <!-- Lista de juegos -->
+
         <div th:each="entry, iterStat : ${library}"
              class="game-list-item"
              th:classappend="${iterStat.index == 0} ? 'selected' : ''">
+
             <div class="game-thumb">
                 <img th:if="${entry.game.imageUrl != null}"
-                     th:src="${entry.game.imageUrl}"
-                     th:alt="${entry.game.title}">
+                     th:src="${entry.game.imageUrl}">
                 <span th:unless="${entry.game.imageUrl != null}">🎮</span>
             </div>
-            <span class="game-list-name" th:text="${entry.game.title}">Nombre del juego</span>
-            <div class="installed-dot" th:if="${entry.installed}"></div>
+
+            <span class="game-list-name"
+                  th:text="${entry.game.title}">
+                Juego
+            </span>
+
+            <div class="installed-dot"
+                 th:if="${entry.installed}">
+            </div>
+
         </div>
+
     </aside>
- 
+
     <!-- CONTENT -->
     <main class="content">
- 
-        <!-- EMPTY STATE -->
-        <div class="empty-state" th:if="${library.empty}">
-            <div class="icon">🎮</div>
-            <p>Tu biblioteca está vacía. ¡Explorá el catálogo y agregá juegos!</p>
-            <a href="/games">Ir a la tienda →</a>
-        </div>
- 
-        <!-- GAMES GRID -->
-        <div class="games-grid" th:unless="${library.empty}">
-            <div class="game-card" th:each="entry : ${library}">
- 
-                <!-- Imagen -->
+
+        <div class="games-grid">
+
+            <div class="game-card"
+                 th:each="entry : ${library}">
+
+                <!-- IMAGE -->
                 <div class="card-image">
+
                     <img th:if="${entry.game.imageUrl != null}"
-                         th:src="${entry.game.imageUrl}"
-                         th:alt="${entry.game.title}">
-                    <span th:unless="${entry.game.imageUrl != null}">🎮</span>
-                    <span class="installed-badge" th:if="${entry.installed}">Instalado</span>
+                         th:src="${entry.game.imageUrl}">
+
+                    <span th:unless="${entry.game.imageUrl != null}">
+                        🎮
+                    </span>
+
+                    <span class="installed-badge"
+                          th:if="${entry.installed}">
+                        Instalado
+                    </span>
+
                 </div>
- 
-                <!-- Info -->
+
+                <!-- BODY -->
                 <div class="card-body">
-                    <div class="card-title" th:text="${entry.game.title}">Nombre del juego</div>
-                    <div class="card-dev" th:text="${entry.game.developerName}">Desarrollador</div>
- 
+
+                    <div class="card-title"
+                         th:text="${entry.game.title}">
+                        Juego
+                    </div>
+
+                    <div class="card-dev"
+                         th:text="${entry.game.developerName}">
+                        Dev
+                    </div>
+
                     <div class="card-meta">
-                        <span class="tag" th:if="${entry.game.genre != null}"
-                              th:text="${entry.game.genre}">Género</span>
-                        <span class="tag" th:if="${entry.lastPlayed != null}">
-                            Jugado recientemente
+
+                        <span class="tag"
+                              th:text="${entry.game.genre}">
+                            Género
                         </span>
+
                     </div>
- 
+
+                    <!-- ACTIONS -->
                     <div class="card-actions">
-                    <!-- Si NO está instalado -->
-                    <div th:unless="${entry.installed}" style="display: flex; gap: 0.5rem; flex: 1;">
-                        <a th:href="@{/library/install/{id}(id=${entry.game.id})}"
-                        th:data-download-url="@{/library/download/{id}(id=${entry.game.id})}"
-                        class="btn btn-primary" style="flex: 1;"
-                        onclick="downloadAndInstall(event, this)">
-                            ⬇ Instalar
-                        </a>
-                    </div>
 
-                    <!-- Si está instalado -->
-                    <div th:if="${entry.installed}" style="display: flex; gap: 0.5rem; flex: 1;">
-                        <button class="btn btn-success" style="flex: 1;">▶ Jugar</button>
-                        <a th:href="@{/library/uninstall/{id}(id=${entry.game.id})}"
-                        class="btn btn-outline"
-                        style="flex: 1; color: var(--danger); border-color: var(--danger);">
-                            ✕ Desinstalar
-                        </a>
-                    </div>
+                        <!-- NO INSTALADO -->
+                        <div th:unless="${entry.installed}"
+                             style="display:flex; gap:0.5rem; flex:1;">
 
-                    <!-- Ver detalle siempre visible -->
-                    <a th:href="@{/games/{id}(id=${entry.game.id})}"
-                    class="btn btn-outline">
-                        Ver detalle
-                    </a>
+                            <a th:href="@{/library/install/{id}(id=${entry.game.id})}"
+                               th:data-download-url="@{/library/download/{id}(id=${entry.game.id})}"
+                               class="btn btn-primary"
+                               onclick="downloadAndInstall(event, this)">
+                                ⬇ Instalar
+                            </a>
+
+                        </div>
+
+                        <!-- INSTALADO -->
+                        <div th:if="${entry.installed}"
+                             style="display:flex; gap:0.5rem; flex:1;">
+
+                            <button class="btn btn-success">
+                                ▶ Jugar
+                            </button>
+
+                            <a th:href="@{/library/uninstall/{id}(id=${entry.game.id})}"
+                               class="btn btn-outline"
+                               style="color: var(--danger); border-color: var(--danger);">
+                                ✕ Desinstalar
+                            </a>
+
+                        </div>
+
+                        <!-- DETALLE -->
+                        <a th:href="@{/games/{id}(id=${entry.game.id})}"
+                           class="btn btn-outline">
+                            Ver detalle
+                        </a>
+
+                        <!-- PATCHES -->
+                        <a th:href="@{/updates/{id}(id=${entry.game.id})}"
+                           class="btn btn-outline">
+                            🛠 Parches
+                        </a>
+
+                        <!-- PROMOTIONS -->
+                        <a th:href="@{/promotions/game/{id}(id=${entry.game.id})}"
+                           class="btn btn-outline">
+                            💸 Promos
+                        </a>
+
+                    </div>
 
                 </div>
- 
+
             </div>
+
         </div>
- 
+
     </main>
+
 </div>
-    <script>
-        // ==========================================
-        // FILTROS DE INSTALACIÓN
-        // ==========================================
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const gameCards = document.querySelectorAll('.game-card');
-        const sidebarItems = document.querySelectorAll('.game-list-item');
 
-        function applyFilter(filter) {
-            gameCards.forEach((card, index) => {
-                const isInstalled = card.querySelector('.installed-badge') !== null;
-                let visible = false;
+<script>
 
-                if (filter === 'Todos') {
-                    visible = true;
-                } else if (filter === 'Instalados') {
-                    visible = isInstalled;
-                } else if (filter === 'No instalados') {
-                    visible = !isInstalled;
-                }
+    function downloadAndInstall(event, element) {
 
-                card.style.display = visible ? 'block' : 'none';
-                // Sincroniza el sidebar
-                if (sidebarItems[index]) {
-                    sidebarItems[index].style.display = visible ? 'flex' : 'none';
-                }
-            });
-        }
+        event.preventDefault();
 
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                applyFilter(btn.textContent.trim());
-            });
-        });
+        const installUrl = element.getAttribute('href');
+        const downloadUrl = element.getAttribute('data-download-url');
 
-        // ==========================================
-        // BUSCADOR
-        // ==========================================
-        const searchInput = document.querySelector('.search-input');
-        searchInput.addEventListener('input', () => {
-            const query = searchInput.value.toLowerCase();
+        const link = document.createElement('a');
 
-            gameCards.forEach((card, index) => {
-                const title = card.querySelector('.card-title').textContent.toLowerCase();
-                const visible = title.includes(query);
-                card.style.display = visible ? 'block' : 'none';
-                if (sidebarItems[index]) {
-                    sidebarItems[index].style.display = visible ? 'flex' : 'none';
-                }
-            });
-        });
+        link.href = downloadUrl;
 
-        // ==========================================
-        // SIDEBAR — click muestra solo ese juego
-        // ==========================================
-        sidebarItems.forEach((item, index) => {
-            item.addEventListener('click', () => {
-                // Marca como seleccionado
-                sidebarItems.forEach(i => i.classList.remove('selected'));
-                item.classList.add('selected');
+        link.click();
 
-                // Muestra solo la card de ese juego, oculta las demás
-                gameCards.forEach((card, i) => {
-                    card.style.display = i === index ? 'block' : 'none';
-                });
+        setTimeout(() => {
+            window.location.href = installUrl;
+        }, 500);
+    }
 
-                // Scroll a la card
-                if (gameCards[index]) {
-                    gameCards[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            });
-        });
+</script>
 
-        // ==========================================
-        // DESCARGA + INSTALACIÓN
-        // ==========================================
-        function downloadAndInstall(event, element) {
-            event.preventDefault();
-            const installUrl = element.getAttribute('href');
-            const downloadUrl = element.getAttribute('data-download-url');
-            const link = document.createElement('a');
-            link.href = downloadUrl;
-            link.click();
-            setTimeout(() => {
-                window.location.href = installUrl;
-            }, 500);
-        }
-    </script>
 </body>
 </html>
