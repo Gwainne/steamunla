@@ -1,11 +1,16 @@
-
-
-
 package com.steamunla.steamunla.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "benefits")
@@ -24,11 +29,19 @@ public class Benefit {
 
     private LocalDateTime createdAt;
 
-
     @ManyToOne
     @JoinColumn(name = "game_id")
     private Game game;
 
+    // 🔥 IMPORTANTE: se ejecuta antes de guardar en DB
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        // valor por defecto seguro
+        active = true;
+    }
 
     // getters y setters
 
@@ -72,8 +85,6 @@ public class Benefit {
         this.createdAt = createdAt;
     }
 
-    // NUEVO
-
     public Game getGame() {
         return game;
     }
@@ -82,6 +93,3 @@ public class Benefit {
         this.game = game;
     }
 }
-
-
-
