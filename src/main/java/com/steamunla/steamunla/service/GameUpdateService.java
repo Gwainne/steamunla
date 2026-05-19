@@ -16,22 +16,21 @@ public class GameUpdateService {
     @Autowired
     private GameUpdateRepository repo;
 
-    // 📌 LISTAR POR JUEGO
+    // LISTAR
     public List<GameUpdate> getUpdatesByGame(Game game) {
         return repo.findByGame(game);
     }
 
-    // 📌 BUSCAR POR ID
+    // GET BY ID
     public GameUpdate getById(Long id) {
         return repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Update no encontrado"));
     }
 
-    // ➕ CREATE
+    // CREATE
     public GameUpdate createUpdate(Game game, String version, String notes) {
 
         GameUpdate update = new GameUpdate();
-
         update.setGame(game);
         update.setVersion(version);
         update.setPatchNotes(notes);
@@ -40,18 +39,18 @@ public class GameUpdateService {
         return repo.save(update);
     }
 
-    // ✏ UPDATE
-    public GameUpdate update(Long id, GameUpdate updated) {
+    // UPDATE (FIX)
+    public GameUpdate update(Long id, String version, String notes) {
 
         GameUpdate existing = getById(id);
 
-        existing.setVersion(updated.getVersion());
-        existing.setPatchNotes(updated.getPatchNotes());
+        existing.setVersion(version);
+        existing.setPatchNotes(notes);
 
         return repo.save(existing);
     }
 
-    // ❌ DELETE
+    // DELETE
     public void delete(Long id) {
         repo.deleteById(id);
     }
