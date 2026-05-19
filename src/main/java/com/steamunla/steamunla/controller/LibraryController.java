@@ -11,12 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.steamunla.steamunla.model.Benefit;
 import com.steamunla.steamunla.model.Game;
 import com.steamunla.steamunla.model.Library;
 import com.steamunla.steamunla.model.User;
 
-import com.steamunla.steamunla.repository.BenefitRepository;
 import com.steamunla.steamunla.repository.GameRepository;
 import com.steamunla.steamunla.repository.UserRepository;
 
@@ -35,9 +33,6 @@ public class LibraryController {
     @Autowired
     private GameRepository gameRepository;
 
-    @Autowired
-    private BenefitRepository benefitRepository;
-
     @GetMapping
     public String showLibrary(Model model) {
 
@@ -46,23 +41,17 @@ public class LibraryController {
 
         List<Library> library = libraryService.getLibraryByUser(mockUser);
 
-        // Contar instalados
         long installedCount = library.stream()
                 .filter(Library::isInstalled)
                 .count();
 
-        // Obtener beneficios activos
-        List<Benefit> benefits = benefitRepository.findByActiveTrue();
-
         model.addAttribute("library", library);
         model.addAttribute("user", mockUser);
         model.addAttribute("installedCount", installedCount);
-        model.addAttribute("benefits", benefits);
 
         return "library/index";
     }
 
-    // Marca un juego como instalado
     @GetMapping("/install/{gameId}")
     public String installGame(@PathVariable Long gameId) {
 
@@ -77,7 +66,6 @@ public class LibraryController {
         return "redirect:/library";
     }
 
-    // Descarga el juego y lo marca como instalado
     @GetMapping("/download/{gameId}")
     public ResponseEntity<Resource> downloadGame(@PathVariable Long gameId) {
 
