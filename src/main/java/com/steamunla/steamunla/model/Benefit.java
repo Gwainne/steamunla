@@ -1,4 +1,8 @@
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8d20162c5214d4237d411bf6ccb8a900c67efd97
 package com.steamunla.steamunla.model;
 
 import java.time.LocalDateTime;
@@ -22,10 +26,13 @@ public class Benefit {
 
     private LocalDateTime createdAt;
 
+<<<<<<< HEAD
     @ManyToOne
     @JoinColumn(name = "game_id")
     private Game game;
 
+=======
+>>>>>>> 8d20162c5214d4237d411bf6ccb8a900c67efd97
     // getters y setters
 
     public Long getId() {
@@ -67,6 +74,7 @@ public class Benefit {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+<<<<<<< HEAD
 
     // NUEVO
 
@@ -78,3 +86,6 @@ public class Benefit {
         this.game = game;
     }
 }
+=======
+}
+>>>>>>> 8d20162c5214d4237d411bf6ccb8a900c67efd97
