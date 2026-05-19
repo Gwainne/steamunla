@@ -1,7 +1,4 @@
 
-
-
-
 package com.steamunla.steamunla.controller;
 
 import java.util.List;
@@ -16,27 +13,23 @@ import com.steamunla.steamunla.repository.PromotionRepository;
 
 @Controller
 @RequestMapping("/promotions")
-public class PromotionController {
-
+public class PromotionController 
+{
     @Autowired
     private PromotionRepository promotionRepository;
 
     @GetMapping
-    public String getAllPromotions(Model model) {
-
-        model.addAttribute("promotions",
-                promotionRepository.findAll());
+    public String getAllPromotions(Model model) 
+    {
+        model.addAttribute("promotions",promotionRepository.findAll());
 
         return "promotions/index";
     }
 
     @GetMapping("/game/{gameId}")
-    public String getPromotionsByGame(
-            @PathVariable Long gameId,
-            Model model) {
-
-        List<Promotion> promotions =
-                promotionRepository.findByGameId(gameId);
+    public String getPromotionsByGame(@PathVariable Long gameId,Model model) 
+    {
+        List<Promotion> promotions = promotionRepository.findByGameId(gameId);
 
         model.addAttribute("promotions", promotions);
 

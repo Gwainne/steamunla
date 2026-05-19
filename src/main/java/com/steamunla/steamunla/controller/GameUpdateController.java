@@ -12,8 +12,8 @@ import com.steamunla.steamunla.service.GameUpdateService;
 
 @Controller
 @RequestMapping("/updates")
-public class GameUpdateController {
-
+public class GameUpdateController 
+{
     @Autowired
     private GameUpdateService updateService;
 
@@ -22,8 +22,8 @@ public class GameUpdateController {
 
     // LISTAR
     @GetMapping("/{gameId}")
-    public String viewUpdates(@PathVariable Long gameId, Model model) {
-
+    public String viewUpdates(@PathVariable Long gameId, Model model) 
+    {
         Game game = gameService.getGameById(gameId);
 
         model.addAttribute("game", game);
@@ -34,8 +34,8 @@ public class GameUpdateController {
 
     // FORM CREATE
     @GetMapping("/new/{gameId}")
-    public String newUpdateForm(@PathVariable Long gameId, Model model) {
-
+    public String newUpdateForm(@PathVariable Long gameId, Model model) 
+    {
         Game game = gameService.getGameById(gameId);
 
         model.addAttribute("game", game);
@@ -48,8 +48,8 @@ public class GameUpdateController {
     @PostMapping("/save/{gameId}")
     public String saveUpdate(@PathVariable Long gameId,
                              @RequestParam String version,
-                             @RequestParam String patchNotes) {
-
+                             @RequestParam String patchNotes) 
+    {
         Game game = gameService.getGameById(gameId);
 
         updateService.createUpdate(game, version, patchNotes);
@@ -59,8 +59,8 @@ public class GameUpdateController {
 
     // EDIT FORM
     @GetMapping("/edit/{id}")
-    public String editForm(@PathVariable Long id, Model model) {
-
+    public String editForm(@PathVariable Long id, Model model) 
+    {
         GameUpdate update = updateService.getById(id);
 
         model.addAttribute("update", update);
@@ -73,8 +73,8 @@ public class GameUpdateController {
     @PostMapping("/update/{id}")
     public String update(@PathVariable Long id,
                          @RequestParam String version,
-                         @RequestParam String patchNotes) {
-
+                         @RequestParam String patchNotes) 
+    {
         updateService.update(id, version, patchNotes);
 
         GameUpdate updated = updateService.getById(id);
@@ -84,8 +84,8 @@ public class GameUpdateController {
 
     // DELETE
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
-
+    public String delete(@PathVariable Long id) 
+    {
         GameUpdate update = updateService.getById(id);
 
         Long gameId = update.getGame().getId();
