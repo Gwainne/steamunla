@@ -113,8 +113,8 @@
         STEAMUNLA
     </a>
 
-    <!-- BOTÓN CREAR PARCHE -->
-    <a th:href="@{/updates/new/{id}(id=${game.id})}" class="btn">
+    <!-- BOTÓN NUEVO PARCHE (CORRECTO) -->
+    <a th:href="@{/updates/new/{gameId}(gameId=${game.id})}" class="btn">
         ➕ Nuevo parche
     </a>
 </nav>
@@ -136,26 +136,36 @@
     <div th:each="u : ${updates}" class="card">
 
         <div class="version">
-            <span>Versión <span th:text="${u.version}">1.0.0</span></span>
+
+            <span>
+                Versión <span th:text="${u.version}">1.0.0</span>
+            </span>
 
             <div class="top-actions">
+
+                <!-- EDIT -->
                 <a th:href="@{/updates/edit/{id}(id=${u.id})}" class="btn">
                     ✏ Editar
                 </a>
 
+                <!-- DELETE -->
                 <a th:href="@{/updates/delete/{id}(id=${u.id})}"
                    class="btn btn-danger"
                    onclick="return confirm('¿Eliminar este parche?')">
                     🗑 Eliminar
                 </a>
+
             </div>
+
         </div>
 
-        <div class="date" th:text="${u.releaseDate}">
+        <div class="date"
+             th:text="${#temporals.format(u.releaseDate, 'dd/MM/yyyy HH:mm')}">
             Fecha
         </div>
 
-        <div class="notes" th:text="${u.patchNotes}">
+        <div class="notes"
+             th:text="${u.patchNotes}">
             Notas del parche
         </div>
 

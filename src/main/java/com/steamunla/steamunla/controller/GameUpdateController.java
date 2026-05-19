@@ -20,7 +20,7 @@ public class GameUpdateController {
     @Autowired
     private GameService gameService;
 
-    // 📌 LISTAR UPDATES
+    // LISTAR
     @GetMapping("/{gameId}")
     public String viewUpdates(@PathVariable Long gameId, Model model) {
 
@@ -32,7 +32,7 @@ public class GameUpdateController {
         return "updates/index";
     }
 
-    // ➕ FORM ALTA
+    // FORM CREATE
     @GetMapping("/new/{gameId}")
     public String newUpdateForm(@PathVariable Long gameId, Model model) {
 
@@ -44,7 +44,7 @@ public class GameUpdateController {
         return "updates/form";
     }
 
-    // 💾 GUARDAR (CREATE)
+    // CREATE
     @PostMapping("/save/{gameId}")
     public String saveUpdate(@PathVariable Long gameId,
                              @RequestParam String version,
@@ -57,7 +57,7 @@ public class GameUpdateController {
         return "redirect:/updates/" + gameId;
     }
 
-    // ✏ FORM EDITAR
+    // EDIT FORM
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Long id, Model model) {
 
@@ -69,24 +69,20 @@ public class GameUpdateController {
         return "updates/edit";
     }
 
-    // 💾 UPDATE
+    // UPDATE
     @PostMapping("/update/{id}")
     public String update(@PathVariable Long id,
                          @RequestParam String version,
                          @RequestParam String patchNotes) {
 
-        GameUpdate update = new GameUpdate();
-        update.setVersion(version);
-        update.setPatchNotes(patchNotes);
+        updateService.update(id, version, patchNotes);
 
-        updateService.update(id, update);
+        GameUpdate updated = updateService.getById(id);
 
-        Game game = updateService.getById(id).getGame();
-
-        return "redirect:/updates/" + game.getId();
+        return "redirect:/updates/" + updated.getGame().getId();
     }
 
-    // ❌ DELETE
+    // DELETE
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
 
