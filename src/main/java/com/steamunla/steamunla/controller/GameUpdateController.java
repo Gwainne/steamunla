@@ -1,4 +1,3 @@
-
 package com.steamunla.steamunla.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.steamunla.steamunla.model.Game;
+import com.steamunla.steamunla.model.GameUpdate;
 import com.steamunla.steamunla.service.GameService;
 import com.steamunla.steamunla.service.GameUpdateService;
 
@@ -20,6 +20,7 @@ public class GameUpdateController {
     @Autowired
     private GameService gameService;
 
+    // 📌 LISTAR UPDATES
     @GetMapping("/{gameId}")
     public String viewUpdates(@PathVariable Long gameId, Model model) {
 
@@ -29,5 +30,72 @@ public class GameUpdateController {
         model.addAttribute("updates", updateService.getUpdatesByGame(game));
 
         return "updates/index";
+    }
+
+    // ➕ FORM ALTA
+    @GetMapping("/new/{gameId}")
+    public String newUpdateForm(@PathVariable Long gameId, Model model) {
+
+        Game game = gameService.getGameById(gameId);
+
+        model.addAttribute("game", game);
+        model.addAttribute("update", new GameUpdate());
+
+        return "updates/form";
+    }
+
+    // 💾 GUARDAR (CREATE)
+    @PostMapping("/save/{gameId}")
+    public String saveUpdate(@PathVariable Long gameId,
+                             @RequestParam String version,
+                             @RequestParam String patchNotes) {
+
+        Game game = gameService.getGameById(gameId);
+
+        updateService.createUpdate(game, version, patchNotes);
+
+        return "redirect:/updates/" + gameId;
+    }
+
+    // ✏ FORM EDITAR
+    @GetMapping("/edit/{id}")
+    public String editForm(@PathVariable Long id, Model model) {
+
+        GameUpdate update = updateService.getById(id);
+
+        model.addAttribute("update", update);
+        model.addAttribute("game", update.getGame());
+
+        return "updates/edit";
+    }
+
+    // 💾 UPDATE
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable Long id,
+                         @RequestParam String version,
+                         @RequestParam String patchNotes) {
+
+        GameUpdate update = new GameUpdate();
+        update.setVersion(version);
+        update.setPatchNotes(patchNotes);
+
+        updateService.update(id, update);
+
+        Game game = updateService.getById(id).getGame();
+
+        return "redirect:/updates/" + game.getId();
+    }
+
+    // ❌ DELETE
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+
+        GameUpdate update = updateService.getById(id);
+
+        Long gameId = update.getGame().getId();
+
+        updateService.delete(id);
+
+        return "redirect:/updates/" + gameId;
     }
 }

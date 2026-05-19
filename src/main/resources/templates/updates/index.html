@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -19,6 +18,33 @@
             background: #161b26;
             padding: 12px 24px;
             border-bottom: 1px solid #2a3347;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            border: 1px solid #2a3347;
+            color: #cbd5e1;
+        }
+
+        .btn:hover {
+            border-color: #4d9fff;
+            color: #4d9fff;
+        }
+
+        .btn-danger {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .btn-danger:hover {
+            background: #ef4444;
+            color: white;
         }
 
         .wrap {
@@ -48,17 +74,26 @@
         .version {
             color: #4d9fff;
             font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .date {
             color: #64748b;
             font-size: 12px;
+            margin-top: 4px;
         }
 
         .notes {
             margin-top: 8px;
             color: #cbd5e1;
             line-height: 1.5;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
         }
 
         .empty {
@@ -74,7 +109,14 @@
 <body>
 
 <nav>
-    <a href="/" style="color:#4d9fff;font-weight:700;text-decoration:none;">STEAMUNLA</a>
+    <a href="/" style="color:#4d9fff;font-weight:700;text-decoration:none;">
+        STEAMUNLA
+    </a>
+
+    <!-- BOTÓN CREAR PARCHE -->
+    <a th:href="@{/updates/new/{id}(id=${game.id})}" class="btn">
+        ➕ Nuevo parche
+    </a>
 </nav>
 
 <div class="wrap">
@@ -85,13 +127,28 @@
         Juego: <span th:text="${game.title}">Nombre juego</span>
     </div>
 
+    <!-- EMPTY -->
     <div th:if="${#lists.isEmpty(updates)}" class="empty">
         Este juego todavía no tiene parches publicados.
     </div>
 
+    <!-- LIST -->
     <div th:each="u : ${updates}" class="card">
+
         <div class="version">
-            Versión <span th:text="${u.version}">1.0.0</span>
+            <span>Versión <span th:text="${u.version}">1.0.0</span></span>
+
+            <div class="top-actions">
+                <a th:href="@{/updates/edit/{id}(id=${u.id})}" class="btn">
+                    ✏ Editar
+                </a>
+
+                <a th:href="@{/updates/delete/{id}(id=${u.id})}"
+                   class="btn btn-danger"
+                   onclick="return confirm('¿Eliminar este parche?')">
+                    🗑 Eliminar
+                </a>
+            </div>
         </div>
 
         <div class="date" th:text="${u.releaseDate}">
@@ -101,10 +158,10 @@
         <div class="notes" th:text="${u.patchNotes}">
             Notas del parche
         </div>
+
     </div>
 
 </div>
 
 </body>
 </html>
-
