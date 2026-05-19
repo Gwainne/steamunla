@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Beneficios — SteamUNLA</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background: #0e1117;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+
+        nav {
+            background: #161b26;
+            padding: 12px 24px;
+            border-bottom: 1px solid #2a3347;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            border: 1px solid #2a3347;
+            color: #cbd5e1;
+        }
+
+        .btn:hover {
+            border-color: #4d9fff;
+            color: #4d9fff;
+        }
+
+        .btn-danger {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .btn-danger:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .wrap {
+            max-width: 1000px;
+            margin: auto;
+            padding: 24px;
+        }
+
+        h1 {
+            font-family: 'Rajdhani', sans-serif;
+            color: #4d9fff;
+        }
+
+        .game-title {
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #161b26;
+            border: 1px solid #2a3347;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .title {
+            color: #4d9fff;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .desc {
+            margin-top: 8px;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .empty {
+            color: #64748b;
+            padding: 40px;
+            border: 1px dashed #2a3347;
+            text-align: center;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <a href="/" style="color:#4d9fff;font-weight:700;text-decoration:none;">
+        STEAMUNLA
+    </a>
+
+    <!-- BOTÓN NUEVO BENEFICIO (FIX: game.id) -->
+    <a th:href="@{/benefits/new/{gameId}(gameId=${game.id})}" class="btn">
+        ➕ Nuevo beneficio
+    </a>
+</nav>
+
+<div class="wrap">
+
+    <h1>Beneficios</h1>
+
+    <!-- FIX: mostrar nombre real del juego -->
+    <div class="game-title" th:text="${game.title}">
+        Beneficios del juego
+    </div>
+
+    <div th:if="${#lists.isEmpty(benefits)}" class="empty">
+        Este juego todavía no tiene beneficios.
+    </div>
+
+    <div th:each="b : ${benefits}" class="card">
+
+        <div class="title">
+
+            <span th:text="${b.title}">Título</span>
+
+            <div class="top-actions">
+
+                <a th:href="@{/benefits/edit/{id}(id=${b.id})}" class="btn">
+                    ✏ Editar
+                </a>
+
+                <a th:href="@{/benefits/delete/{id}(id=${b.id})}"
+                   class="btn btn-danger"
+                   onclick="return confirm('¿Eliminar beneficio?')">
+                    🗑 Eliminar
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="desc" th:text="${b.description}">
+            Descripción
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

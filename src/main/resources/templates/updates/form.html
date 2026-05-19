@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo parche</title>
+
+    <style>
+        body {
+            background: #0e1117;
+            color: #e2e8f0;
+            font-family: Arial;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        input, textarea {
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #2a3347;
+            background: #161b26;
+            color: white;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #4d9fff;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2f7fe0;
+        }
+
+        a {
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Nuevo parche</h1>
+
+    <form th:action="@{/updates/save/{id}(id=${game.id})}" method="post">
+
+        <label>Versión</label>
+        <input type="text" name="version" placeholder="Ej: 1.0.3" required>
+
+        <label>Notas del parche</label>
+        <textarea name="patchNotes" rows="6" required></textarea>
+
+        <button type="submit">Guardar</button>
+
+    </form>
+
+    <br>
+    <a th:href="@{/updates/{id}(id=${game.id})}">
+        ← Volver
+    </a>
+
+</div>
+
+</body>
+</html>
+
+
