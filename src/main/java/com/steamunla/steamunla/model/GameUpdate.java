@@ -14,8 +14,8 @@ import lombok.Data;
 @Entity
 @Table(name = "game_updates")
 @Data
-public class GameUpdate {
-
+public class GameUpdate 
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

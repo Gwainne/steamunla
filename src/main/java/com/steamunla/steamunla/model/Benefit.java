@@ -14,8 +14,8 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "benefits")
-public class Benefit {
-
+public class Benefit 
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,8 +35,10 @@ public class Benefit {
 
     // 🔥 IMPORTANTE: se ejecuta antes de guardar en DB
     @PrePersist
-    public void prePersist() {
-        if (createdAt == null) {
+    public void prePersist() 
+    {
+        if (createdAt == null) 
+        {
             createdAt = LocalDateTime.now();
         }
         // valor por defecto seguro
@@ -45,51 +47,63 @@ public class Benefit {
 
     // getters y setters
 
-    public Long getId() {
+    public Long getId() 
+    {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Long id) 
+    {
         this.id = id;
     }
 
-    public String getTitle() {
+    public String getTitle() 
+    {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(String title) 
+    {
         this.title = title;
     }
 
-    public String getDescription() {
+    public String getDescription() 
+    {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description) 
+    {
         this.description = description;
     }
 
-    public boolean isActive() {
+    public boolean isActive() 
+    {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(boolean active) 
+    {
         this.active = active;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public LocalDateTime getCreatedAt() 
+    {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt)
+    {
         this.createdAt = createdAt;
     }
 
-    public Game getGame() {
+    public Game getGame() 
+    {
         return game;
     }
 
-    public void setGame(Game game) {
+    public void setGame(Game game) 
+    {
         this.game = game;
     }
 }

@@ -7,9 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.steamunla.steamunla.model.Promotion;
 
-public interface PromotionRepository
-        extends JpaRepository<Promotion, Long> {
-
+public interface PromotionRepository extends JpaRepository<Promotion, Long> 
+{
     List<Promotion> findByGameId(Long gameId);
 }
 

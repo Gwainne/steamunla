@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface BenefitRepository extends JpaRepository<Benefit, Long> {
-
+public interface BenefitRepository extends JpaRepository<Benefit, Long> 
+{
     // 📌 LISTAR POR JUEGO
     List<Benefit> findByGameId(Long gameId);
 

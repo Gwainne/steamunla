@@ -13,8 +13,8 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "promotions")
-public class Promotion {
-
+public class Promotion 
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,59 +38,73 @@ public class Promotion {
 
     // ===== GETTERS Y SETTERS =====
 
-    public Long getId() {
+    public Long getId() 
+    {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Long id) 
+    {
         this.id = id;
     }
 
-    public Game getGame() {
+    public Game getGame() 
+    {
         return game;
     }
 
-    public void setGame(Game game) {
+    public void setGame(Game game) 
+    {
         this.game = game;
     }
 
-    public Double getDiscountPercent() {
+    public Double getDiscountPercent() 
+    {
         return discountPercent;
     }
 
-    public void setDiscountPercent(Double discountPercent) {
+    public void setDiscountPercent(Double discountPercent) 
+    {
         this.discountPercent = discountPercent;
     }
 
-    public LocalDateTime getStartDate() {
+    public LocalDateTime getStartDate() 
+    {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(LocalDateTime startDate) 
+    {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getEndDate() {
+    public LocalDateTime getEndDate() 
+    {
         return endDate;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
+    public void setEndDate(LocalDateTime endDate)
+    {
         this.endDate = endDate;
     }
 
-    public String getDescription() {
+    public String getDescription() 
+    {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description) 
+    {
         this.description = description;
     }
 
-    public boolean isActive() {
+    public boolean isActive() 
+    {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(boolean active) 
+    {
         this.active = active;
     }
 }

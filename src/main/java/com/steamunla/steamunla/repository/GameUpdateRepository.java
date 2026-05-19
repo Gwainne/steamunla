@@ -10,8 +10,8 @@ import com.steamunla.steamunla.model.Game;
 import com.steamunla.steamunla.model.GameUpdate;
 
 @Repository
-public interface GameUpdateRepository extends JpaRepository<GameUpdate, Long> {
-
+public interface GameUpdateRepository extends JpaRepository<GameUpdate, Long> 
+{
     // 📌 Todos los parches de un juego
     List<GameUpdate> findByGame(Game game);
 
