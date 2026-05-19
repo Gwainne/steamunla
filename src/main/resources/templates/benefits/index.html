@@ -1,0 +1,122 @@
+
+
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Beneficios — SteamUNLA</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background: #0e1117;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+
+        nav {
+            background: #161b26;
+            padding: 12px 24px;
+            border-bottom: 1px solid #2a3347;
+        }
+
+        .wrap {
+            max-width: 1000px;
+            margin: auto;
+            padding: 24px;
+        }
+
+        h1 {
+            font-family: 'Rajdhani', sans-serif;
+            color: #4d9fff;
+        }
+
+        .card {
+            background: #161b26;
+            border: 1px solid #2a3347;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4d9fff;
+        }
+
+        .desc {
+            color: #cbd5e1;
+            margin-top: 6px;
+        }
+
+        .status {
+            font-size: 12px;
+            margin-top: 8px;
+            color: #64748b;
+        }
+
+        .active {
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        .inactive {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .empty {
+            color: #64748b;
+            padding: 40px;
+            border: 1px dashed #2a3347;
+            text-align: center;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <a href="/" style="color:#4d9fff;font-weight:700;text-decoration:none;">
+        STEAMUNLA
+    </a>
+</nav>
+
+<div class="wrap">
+
+    <h1>Beneficios</h1>
+
+    <!-- EMPTY STATE -->
+    <div th:if="${#lists.isEmpty(benefits)}" class="empty">
+        No hay beneficios disponibles en este momento.
+    </div>
+
+    <!-- LISTA -->
+    <div th:each="b : ${benefits}" class="card">
+
+        <div class="title" th:text="${b.title}">
+            Título beneficio
+        </div>
+
+        <div class="desc" th:text="${b.description}">
+            Descripción beneficio
+        </div>
+
+        <div class="status">
+            Estado:
+            <span th:classappend="${b.active} ? 'active' : 'inactive'"
+                  th:text="${b.active} ? 'Activo' : 'Inactivo'">
+            </span>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -11,17 +11,19 @@ import com.steamunla.steamunla.model.Library;
 import com.steamunla.steamunla.model.Promotion;
 import com.steamunla.steamunla.model.User;
 import com.steamunla.steamunla.model.GameUpdate;
+import com.steamunla.steamunla.model.Benefit;
 
 import com.steamunla.steamunla.repository.GameRepository;
 import com.steamunla.steamunla.repository.LibraryRepository;
 import com.steamunla.steamunla.repository.PromotionRepository;
 import com.steamunla.steamunla.repository.UserRepository;
 import com.steamunla.steamunla.repository.GameUpdateRepository;
+import com.steamunla.steamunla.repository.BenefitRepository;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
 
-@Autowired
+    @Autowired
     private PromotionRepository promotionRepository;
 
     @Autowired
@@ -36,10 +38,13 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private GameUpdateRepository gameUpdateRepository;
 
+    @Autowired
+    private BenefitRepository benefitRepository;
+
     @Override
     public void run(String... args) {
 
-        // ✅ CORRECTO: solo corre si no hay juegos
+        // SOLO SI NO HAY JUEGOS
         if (gameRepository.count() == 0) {
 
             // =========================
@@ -66,18 +71,18 @@ public class DataInitializer implements CommandLineRunner {
             game1.setCreatedAt(LocalDateTime.now());
             game1 = gameRepository.save(game1);
 
-            // 🧩 GAME 1 UPDATES
+            // UPDATES GAME 1
             GameUpdate update1 = new GameUpdate();
             update1.setGame(game1);
             update1.setVersion("1.0.1");
-            update1.setPatchNotes("Mejora de rendimiento, optimización de servidores y fixes de bugs.");
+            update1.setPatchNotes("Mejora de rendimiento y fixes de bugs.");
             update1.setReleaseDate(LocalDateTime.now());
             gameUpdateRepository.save(update1);
 
             GameUpdate update2 = new GameUpdate();
             update2.setGame(game1);
             update2.setVersion("1.0.2");
-            update2.setPatchNotes("Balance de armas y ajustes en matchmaking.");
+            update2.setPatchNotes("Balance de armas y matchmaking.");
             update2.setReleaseDate(LocalDateTime.now());
             gameUpdateRepository.save(update2);
 
@@ -93,11 +98,11 @@ public class DataInitializer implements CommandLineRunner {
             game2.setCreatedAt(LocalDateTime.now());
             game2 = gameRepository.save(game2);
 
-            // 🧩 GAME 2 UPDATES
+            // UPDATE GAME 2
             GameUpdate update3 = new GameUpdate();
             update3.setGame(game2);
             update3.setVersion("1.0.1");
-            update3.setPatchNotes("Corrección de bugs y mejoras de estabilidad.");
+            update3.setPatchNotes("Corrección de bugs y estabilidad.");
             update3.setReleaseDate(LocalDateTime.now());
             gameUpdateRepository.save(update3);
 
@@ -118,6 +123,9 @@ public class DataInitializer implements CommandLineRunner {
             entry2.setAddedAt(LocalDateTime.now());
             libraryRepository.save(entry2);
 
+            // =========================
+            // 💸 PROMOTION
+            // =========================
             Promotion promo1 = new Promotion();
             promo1.setDescription("Oferta de verano");
             promo1.setDiscountPercent(50.0);
@@ -128,7 +136,24 @@ public class DataInitializer implements CommandLineRunner {
 
             promotionRepository.save(promo1);
 
+            // =========================
+            // 🎁 BENEFITS
+            // =========================
+            Benefit benefit1 = new Benefit();
+            benefit1.setTitle("Skins exclusivas");
+            benefit1.setDescription("Acceso a skins especiales dentro del juego.");
+            benefit1.setActive(true);
+            benefit1.setGame(game1);
+
+            benefitRepository.save(benefit1);
+
+            Benefit benefit2 = new Benefit();
+            benefit2.setTitle("XP Bonus");
+            benefit2.setDescription("+20% experiencia en partidas.");
+            benefit2.setActive(true);
+            benefit2.setGame(game2);
+
+            benefitRepository.save(benefit2);
         }
     }
 }
-
