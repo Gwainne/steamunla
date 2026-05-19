@@ -1,4 +1,5 @@
 
+
 package com.steamunla.steamunla.model;
 
 import java.time.LocalDateTime;
@@ -22,9 +23,11 @@ public class Benefit {
 
     private LocalDateTime createdAt;
 
+
     @ManyToOne
     @JoinColumn(name = "game_id")
     private Game game;
+
 
     // getters y setters
 
@@ -78,3 +81,5 @@ public class Benefit {
         this.game = game;
     }
 }
+
+
