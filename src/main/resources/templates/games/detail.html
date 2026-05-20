@@ -187,9 +187,9 @@
 <nav>
     <a href="/" class="nav-logo">STEAMUNLA</a>
     <div class="nav-links">
-        <a href="/games">Tienda</a>
+        <a href="/games" class="active">Tienda</a>
         <a href="/games/new">Publicar juego</a>
-        <a href="/library" class="active">Biblioteca</a>
+        <a href="/library">Biblioteca</a>
         <a href="/wishlist">Lista de deseados</a>
     </div>
     <div class="nav-links" th:if="${user != null}">
@@ -258,6 +258,13 @@
                 <!-- Si no lo tiene, mostrar botón de ir a biblioteca, si lo tiene -->
                 <a href="/library" class="btn primary" style="text-align: center;" th:if="${alreadyOwned}">
                     Ir a mi biblioteca
+                </a>
+
+                <a th:href="@{/wishlist/add/{gameId}(gameId=${game.id})}" class="btn" th:if="${user != null and !alreadyOwned and !isInWishlist}">
+                    Agregar a wishlist
+                </a>
+                <a th:href="@{/wishlist/remove/{gameId}(gameId=${game.id})}" class="btn" th:if="${user != null and !alreadyOwned and isInWishlist}">
+                    Quitar de wishlist
                 </a>
 
                 <!-- Botón para seguir explorando -->

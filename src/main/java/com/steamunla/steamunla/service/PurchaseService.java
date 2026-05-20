@@ -10,6 +10,7 @@ import com.steamunla.steamunla.model.Game;
 import com.steamunla.steamunla.model.Purchase;
 import com.steamunla.steamunla.model.User;
 import com.steamunla.steamunla.repository.PurchaseRepository;
+import com.steamunla.steamunla.service.WishlistService;
 
 @Service
 public class PurchaseService {
@@ -19,6 +20,9 @@ public class PurchaseService {
 
     @Autowired
     private LibraryService libraryService;
+
+    @Autowired
+    private WishlistService wishlistService;
 
     /**
      * Verifica si un usuario ya ha comprado un juego específico
@@ -57,6 +61,7 @@ public class PurchaseService {
         Purchase saved = purchaseRepository.save(purchase);
 
         libraryService.addGameToLibrary(user, game);
+        wishlistService.removeGameFromWishlist(user, game);
 
         return saved;
     }

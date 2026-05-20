@@ -16,6 +16,7 @@ import com.steamunla.steamunla.model.User;
 import com.steamunla.steamunla.service.GameService;
 import com.steamunla.steamunla.service.ReviewService;
 import com.steamunla.steamunla.service.PurchaseService;
+import com.steamunla.steamunla.service.WishlistService;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -40,6 +41,9 @@ public class GameController {
     @Autowired
     private PurchaseService purchaseService;
 
+    @Autowired
+    private WishlistService wishlistService;
+
     private User getLoggedUser(HttpSession session) {
         return (User) session.getAttribute("loggedUser");
     }
@@ -54,15 +58,21 @@ public class GameController {
 
         // Si el usuario está logueado, obtener IDs de juegos que ya posee
         Set<Long> ownedGameIds = new HashSet<>();
+        Set<Long> wishlistGameIds = new HashSet<>();
         if (user != null) {
             // Obtener todos los juegos comprados por el usuario
             List<Purchase> purchases = purchaseService.getGamesPurchasedByUser(user);
             ownedGameIds = purchases.stream()
                     .map(p -> p.getGame().getId())
                     .collect(Collectors.toSet());
+
+            wishlistGameIds = wishlistService.getWishlistByUser(user).stream()
+                    .map(w -> w.getGame().getId())
+                    .collect(Collectors.toSet());
         }
 
         model.addAttribute("ownedGameIds", ownedGameIds);
+        model.addAttribute("wishlistGameIds", wishlistGameIds);
 
         return "games/index";
     }
@@ -81,10 +91,16 @@ public class GameController {
             alreadyOwned = purchaseService.hasUserAlreadyBoughtGame(user, game);
         }
 
+        boolean inWishlist = false;
+        if (user != null) {
+            inWishlist = wishlistService.isGameInWishlist(user, game);
+        }
+
         model.addAttribute("game", game);
         model.addAttribute("reviews", reviews);
         model.addAttribute("user", user);
         model.addAttribute("alreadyOwned", alreadyOwned);
+        model.addAttribute("isInWishlist", inWishlist);
 
         return "games/detail";
     }

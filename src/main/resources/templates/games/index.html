@@ -104,9 +104,9 @@
 <nav>
     <a href="/" class="nav-logo">STEAMUNLA</a>
     <div class="nav-links">
-        <a href="/games">Tienda</a>
+        <a href="/games" class="active">Tienda</a>
         <a href="/games/new">Publicar juego</a>
-        <a href="/library" class="active">Biblioteca</a>
+        <a href="/library">Biblioteca</a>
         <a href="/wishlist">Lista de deseados</a>
     </div>
     <div class="nav-links" th:if="${user != null}">
@@ -191,6 +191,15 @@
                 Comprar
             </button>
         </form>
+
+        <div th:if="${user != null and !#sets.contains(ownedGameIds, game.id)}" style="display:flex; flex-direction:column; gap:8px;">
+            <a th:href="@{/wishlist/add/{gameId}(gameId=${game.id})}" class="btn" th:unless="${#sets.contains(wishlistGameIds, game.id)}">
+                Agregar a wishlist
+            </a>
+            <a th:href="@{/wishlist/remove/{gameId}(gameId=${game.id})}" class="btn" th:if="${#sets.contains(wishlistGameIds, game.id)}">
+                Quitar de wishlist
+            </a>
+        </div>
     </th:block>
 
     <!-- Reseña -->
