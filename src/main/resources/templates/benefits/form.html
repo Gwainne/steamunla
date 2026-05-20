@@ -80,7 +80,7 @@
 
         .back {
             display: inline-block;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             color: #94a3b8;
             text-decoration: none;
         }
@@ -101,19 +101,19 @@
 
 <div class="wrap">
 
-    <a class="back"
-       th:href="@{/benefits/game/{gameId}(gameId=${gameId})}">
-        ← Volver
+    <!-- 🔥 VOLVER CONSISTENTE -->
+    <a class="back" th:href="@{/library}">
+        ← Volver a la biblioteca
     </a>
 
-    <h1 th:text="${benefit.id != null} ? 'Editar beneficio' : 'Nuevo beneficio'">
+    <h1 th:text="${benefit != null && benefit.id != null} ? 'Editar beneficio' : 'Nuevo beneficio'">
         Beneficio
     </h1>
 
     <div class="card">
 
         <!-- CREATE -->
-        <form th:if="${benefit.id == null}"
+        <form th:if="${benefit == null || benefit.id == null}"
               th:action="@{/benefits/save/{gameId}(gameId=${gameId})}"
               method="post">
 
@@ -130,7 +130,7 @@
         </form>
 
         <!-- EDIT -->
-        <form th:if="${benefit.id != null}"
+        <form th:if="${benefit != null && benefit.id != null}"
               th:action="@{/benefits/update/{id}(id=${benefit.id})}"
               method="post">
 

@@ -1,3 +1,4 @@
+
 package com.steamunla.steamunla.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,18 +13,20 @@ import com.steamunla.steamunla.service.GameUpdateService;
 
 @Controller
 @RequestMapping("/updates")
-public class GameUpdateController 
-{
+public class GameUpdateController {
+
     @Autowired
     private GameUpdateService updateService;
 
     @Autowired
     private GameService gameService;
 
-    // LISTAR
+    // =========================
+    // LISTAR UPDATES POR JUEGO
+    // =========================
     @GetMapping("/{gameId}")
-    public String viewUpdates(@PathVariable Long gameId, Model model) 
-    {
+    public String viewUpdates(@PathVariable Long gameId, Model model) {
+
         Game game = gameService.getGameById(gameId);
 
         model.addAttribute("game", game);
@@ -32,10 +35,12 @@ public class GameUpdateController
         return "updates/index";
     }
 
+    // =========================
     // FORM CREATE
+    // =========================
     @GetMapping("/new/{gameId}")
-    public String newUpdateForm(@PathVariable Long gameId, Model model) 
-    {
+    public String newUpdateForm(@PathVariable Long gameId, Model model) {
+
         Game game = gameService.getGameById(gameId);
 
         model.addAttribute("game", game);
@@ -44,12 +49,14 @@ public class GameUpdateController
         return "updates/form";
     }
 
+    // =========================
     // CREATE
+    // =========================
     @PostMapping("/save/{gameId}")
     public String saveUpdate(@PathVariable Long gameId,
                              @RequestParam String version,
-                             @RequestParam String patchNotes) 
-    {
+                             @RequestParam String patchNotes) {
+
         Game game = gameService.getGameById(gameId);
 
         updateService.createUpdate(game, version, patchNotes);
@@ -57,35 +64,41 @@ public class GameUpdateController
         return "redirect:/updates/" + gameId;
     }
 
-    // EDIT FORM
+    // =========================
+    // FORM EDIT (MISMO FORM)
+    // =========================
     @GetMapping("/edit/{id}")
-    public String editForm(@PathVariable Long id, Model model) 
-    {
+    public String editForm(@PathVariable Long id, Model model) {
+
         GameUpdate update = updateService.getById(id);
 
         model.addAttribute("update", update);
         model.addAttribute("game", update.getGame());
 
-        return "updates/edit";
+        return "updates/form"; // 🔥 IMPORTANTE: unificado
     }
 
+    // =========================
     // UPDATE
+    // =========================
     @PostMapping("/update/{id}")
     public String update(@PathVariable Long id,
                          @RequestParam String version,
-                         @RequestParam String patchNotes) 
-    {
+                         @RequestParam String patchNotes) {
+
+        GameUpdate update = updateService.getById(id);
+
         updateService.update(id, version, patchNotes);
 
-        GameUpdate updated = updateService.getById(id);
-
-        return "redirect:/updates/" + updated.getGame().getId();
+        return "redirect:/updates/" + update.getGame().getId();
     }
 
+    // =========================
     // DELETE
+    // =========================
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) 
-    {
+    public String delete(@PathVariable Long id) {
+
         GameUpdate update = updateService.getById(id);
 
         Long gameId = update.getGame().getId();

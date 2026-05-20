@@ -96,6 +96,7 @@
 
         form {
             margin: 0;
+            display: inline;
         }
 
         .empty {
@@ -105,12 +106,19 @@
             text-align: center;
             border-radius: 12px;
         }
+
+        /* 🔥 BOTÓN FINAL */
+        .bottom-nav {
+            margin-top: 30px;
+            text-align: left;
+        }
     </style>
 </head>
 
 <body>
 
 <nav>
+
     <a href="/" style="color:#4d9fff;font-weight:700;text-decoration:none;">
         STEAMUNLA
     </a>
@@ -119,6 +127,7 @@
        class="btn">
         ➕ Nuevo beneficio
     </a>
+
 </nav>
 
 <div class="wrap">
@@ -126,7 +135,7 @@
     <h1>Beneficios</h1>
 
     <div class="game-title"
-         th:text="${game.title}">
+         th:text="${game != null ? game.title : 'Juego'}">
         Juego
     </div>
 
@@ -148,11 +157,11 @@
                 </a>
 
                 <form th:action="@{/benefits/delete/{id}(id=${b.id})}"
-                      method="post">
+                      method="post"
+                      onsubmit="return confirm('¿Eliminar beneficio?')">
 
                     <button type="submit"
-                            class="btn btn-danger"
-                            onclick="return confirm('¿Eliminar beneficio?')">
+                            class="btn btn-danger">
                         🗑 Eliminar
                     </button>
 
@@ -168,8 +177,16 @@
 
     </div>
 
+    <!-- 🔥 BOTÓN ABAJO DE TODO -->
+    <div class="bottom-nav">
+
+        <a th:href="@{/library}" class="btn">
+            ← Volver a la biblioteca
+        </a>
+
+    </div>
+
 </div>
 
 </body>
 </html>
-

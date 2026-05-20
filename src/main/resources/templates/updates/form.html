@@ -1,21 +1,29 @@
-
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
-    <title>Nuevo parche</title>
+    <title>Nuevo parche — SteamUNLA</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
         body {
             background: #0e1117;
             color: #e2e8f0;
-            font-family: Arial;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
         }
 
         .container {
             max-width: 600px;
             margin: auto;
             padding: 30px;
+        }
+
+        h1 {
+            font-family: 'Rajdhani', sans-serif;
+            color: #4d9fff;
         }
 
         input, textarea {
@@ -26,7 +34,8 @@
             border-radius: 6px;
             border: 1px solid #2a3347;
             background: #161b26;
-            color: white;
+            color: #e2e8f0;
+            box-sizing: border-box;
         }
 
         button {
@@ -36,14 +45,29 @@
             color: white;
             border-radius: 6px;
             cursor: pointer;
+            font-weight: 600;
         }
 
         button:hover {
             background: #2f7fe0;
         }
 
-        a {
+        .back {
+            display: inline-block;
+            margin-top: 20px;
             color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .back:hover {
+            color: #4d9fff;
+        }
+
+        .card {
+            background: #161b26;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #2a3347;
         }
     </style>
 </head>
@@ -54,26 +78,28 @@
 
     <h1>Nuevo parche</h1>
 
-    <form th:action="@{/updates/save/{id}(id=${game.id})}" method="post">
+    <div class="card">
 
-        <label>Versión</label>
-        <input type="text" name="version" placeholder="Ej: 1.0.3" required>
+        <form th:action="@{/updates/save/{id}(id=${game.id})}" method="post">
 
-        <label>Notas del parche</label>
-        <textarea name="patchNotes" rows="6" required></textarea>
+            <label>Versión</label>
+            <input type="text" name="version" placeholder="Ej: 1.0.3" required>
 
-        <button type="submit">Guardar</button>
+            <label>Notas del parche</label>
+            <textarea name="patchNotes" rows="6" required></textarea>
 
-    </form>
+            <button type="submit">Guardar</button>
 
-    <br>
-    <a th:href="@{/updates/{id}(id=${game.id})}">
-        ← Volver
+        </form>
+
+    </div>
+
+    <!-- 🔥 VOLVER CORRECTO -->
+    <a class="back" th:href="@{/updates/game/{id}(id=${game.id})}">
+        ← Volver a actualizaciones
     </a>
 
 </div>
 
 </body>
 </html>
-
-
