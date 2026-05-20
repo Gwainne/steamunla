@@ -1,37 +1,40 @@
 package com.steamunla.steamunla.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.steamunla.steamunla.model.Benefit;
 import com.steamunla.steamunla.model.Game;
-import com.steamunla.steamunla.repository.BenefitRepository;
 import com.steamunla.steamunla.repository.GameRepository;
+import com.steamunla.steamunla.service.BenefitService;
 
 @Controller
 @RequestMapping("/benefits")
-public class BenefitController 
-{
-    @Autowired
-    private BenefitRepository benefitRepository;
+public class BenefitController {
 
-    @Autowired
-    private GameRepository gameRepository;
+    private final BenefitService benefitService;
+    private final GameRepository gameRepository;
+
+    public BenefitController(BenefitService benefitService,
+                             GameRepository gameRepository) {
+        this.benefitService = benefitService;
+        this.gameRepository = gameRepository;
+    }
 
     // =========================
-    // LISTAR POR JUEGO
+    // LISTAR BENEFICIOS
     // =========================
 
     @GetMapping("/game/{gameId}")
-    public String list(@PathVariable Long gameId, Model model) 
-    {
+    public String list(@PathVariable Long gameId, Model model) {
+
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new RuntimeException("Game no encontrado"));
 
         model.addAttribute("game", game);
-        model.addAttribute("benefits", benefitRepository.findByGameId(gameId));
+        model.addAttribute("gameId", gameId);
+        model.addAttribute("benefits", benefitService.getByGameId(gameId));
 
         return "benefits/index";
     }
@@ -41,14 +44,14 @@ public class BenefitController
     // =========================
 
     @GetMapping("/new/{gameId}")
-    public String newForm(@PathVariable Long gameId, Model model) 
-    {
+    public String newForm(@PathVariable Long gameId, Model model) {
+
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new RuntimeException("Game no encontrado"));
 
-        model.addAttribute("gameId", gameId);
         model.addAttribute("game", game);
-        model.addAttribute("benefit", null);
+        model.addAttribute("gameId", gameId);
+        model.addAttribute("benefit", new Benefit());
 
         return "benefits/form";
     }
@@ -60,20 +63,19 @@ public class BenefitController
     @PostMapping("/save/{gameId}")
     public String save(@PathVariable Long gameId,
                        @RequestParam String title,
-                       @RequestParam String description) 
-    {
+                       @RequestParam String description) {
 
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new RuntimeException("Game no encontrado"));
 
-        Benefit b = new Benefit();
+        Benefit benefit = new Benefit();
 
-        b.setTitle(title);
-        b.setDescription(description);
-        b.setActive(true);
-        b.setGame(game);
+        benefit.setTitle(title);
+        benefit.setDescription(description);
+        benefit.setGame(game);
+        benefit.setActive(true);
 
-        benefitRepository.save(b);
+        benefitService.save(benefit);
 
         return "redirect:/benefits/game/" + gameId;
     }
@@ -83,14 +85,13 @@ public class BenefitController
     // =========================
 
     @GetMapping("/edit/{id}")
-    public String editForm(@PathVariable Long id, Model model) 
-    {
-        Benefit b = benefitRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Benefit no encontrado"));
+    public String editForm(@PathVariable Long id, Model model) {
 
-        model.addAttribute("benefit", b);
-        model.addAttribute("gameId", b.getGame().getId());
-        model.addAttribute("game", b.getGame());
+        Benefit benefit = benefitService.getById(id);
+
+        model.addAttribute("benefit", benefit);
+        model.addAttribute("game", benefit.getGame());
+        model.addAttribute("gameId", benefit.getGame().getId());
 
         return "benefits/form";
     }
@@ -98,37 +99,34 @@ public class BenefitController
     // =========================
     // UPDATE
     // =========================
-    @PostMapping("/update/{id}")
 
+    @PostMapping("/update/{id}")
     public String update(@PathVariable Long id,
                          @RequestParam String title,
-                         @RequestParam String description) 
-    {
+                         @RequestParam String description) {
 
-        Benefit b = benefitRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Benefit no encontrado"));
+        Benefit benefit = benefitService.getById(id);
 
-        b.setTitle(title);
-        b.setDescription(description);
+        benefit.setTitle(title);
+        benefit.setDescription(description);
 
-        benefitRepository.save(b);
+        benefitService.save(benefit);
 
-        return "redirect:/benefits/game/" + b.getGame().getId();
+        return "redirect:/benefits/game/" + benefit.getGame().getId();
     }
 
     // =========================
     // DELETE
     // =========================
 
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) 
-    {
-        Benefit b = benefitRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Benefit no encontrado"));
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
 
-        Long gameId = b.getGame().getId();
+        Benefit benefit = benefitService.getById(id);
 
-        benefitRepository.delete(b);
+        Long gameId = benefit.getGame().getId();
+
+        benefitService.delete(id);
 
         return "redirect:/benefits/game/" + gameId;
     }

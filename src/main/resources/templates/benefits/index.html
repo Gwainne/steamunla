@@ -31,6 +31,8 @@
             font-size: 12px;
             border: 1px solid #2a3347;
             color: #cbd5e1;
+            background: transparent;
+            cursor: pointer;
         }
 
         .btn:hover {
@@ -89,6 +91,11 @@
         .top-actions {
             display: flex;
             gap: 10px;
+            align-items: center;
+        }
+
+        form {
+            margin: 0;
         }
 
         .empty {
@@ -108,9 +115,7 @@
         STEAMUNLA
     </a>
 
-    <!-- SOLO USA gameId (más seguro) -->
-    <a th:if="${gameId != null}"
-       th:href="@{/benefits/new/{gameId}(gameId=${gameId})}"
+    <a th:href="@{/benefits/new/{gameId}(gameId=${gameId})}"
        class="btn">
         ➕ Nuevo beneficio
     </a>
@@ -121,7 +126,7 @@
     <h1>Beneficios</h1>
 
     <div class="game-title"
-         th:text="${game != null ? game.title : 'Juego'}">
+         th:text="${game.title}">
         Juego
     </div>
 
@@ -132,17 +137,29 @@
     <div th:each="b : ${benefits}" class="card">
 
         <div class="title">
+
             <span th:text="${b.title}">Título</span>
 
             <div class="top-actions">
-                <a th:href="@{/benefits/edit/{id}(id=${b.id})}" class="btn">✏ Editar</a>
 
-                <a th:href="@{/benefits/delete/{id}(id=${b.id})}"
-                   class="btn btn-danger"
-                   onclick="return confirm('¿Eliminar beneficio?')">
-                    🗑 Eliminar
+                <a th:href="@{/benefits/edit/{id}(id=${b.id})}"
+                   class="btn">
+                    ✏ Editar
                 </a>
+
+                <form th:action="@{/benefits/delete/{id}(id=${b.id})}"
+                      method="post">
+
+                    <button type="submit"
+                            class="btn btn-danger"
+                            onclick="return confirm('¿Eliminar beneficio?')">
+                        🗑 Eliminar
+                    </button>
+
+                </form>
+
             </div>
+
         </div>
 
         <div class="desc" th:text="${b.description}">
@@ -155,3 +172,4 @@
 
 </body>
 </html>
+

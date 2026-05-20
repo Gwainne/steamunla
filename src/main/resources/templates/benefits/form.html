@@ -46,7 +46,8 @@
             font-size: 14px;
         }
 
-        input, textarea {
+        input,
+        textarea {
             width: 100%;
             padding: 10px;
             margin-top: 6px;
@@ -54,6 +55,7 @@
             border: 1px solid #2a3347;
             background: #0e1117;
             color: #e2e8f0;
+            box-sizing: border-box;
         }
 
         textarea {
@@ -99,21 +101,19 @@
 
 <div class="wrap">
 
-    <!-- BACK -->
     <a class="back"
        th:href="@{/benefits/game/{gameId}(gameId=${gameId})}">
         ← Volver
     </a>
 
-    <!-- TÍTULO DINÁMICO -->
-    <h1 th:text="${benefit != null} ? 'Editar beneficio' : 'Nuevo beneficio'">
+    <h1 th:text="${benefit.id != null} ? 'Editar beneficio' : 'Nuevo beneficio'">
         Beneficio
     </h1>
 
     <div class="card">
 
         <!-- CREATE -->
-        <form th:if="${benefit == null}"
+        <form th:if="${benefit.id == null}"
               th:action="@{/benefits/save/{gameId}(gameId=${gameId})}"
               method="post">
 
@@ -123,23 +123,32 @@
             <label>Descripción</label>
             <textarea name="description" required></textarea>
 
-            <button class="btn" type="submit">Guardar</button>
+            <button class="btn" type="submit">
+                Guardar
+            </button>
+
         </form>
 
         <!-- EDIT -->
-        <form th:if="${benefit != null}"
+        <form th:if="${benefit.id != null}"
               th:action="@{/benefits/update/{id}(id=${benefit.id})}"
               method="post">
 
             <label>Título</label>
-            <input type="text" name="title"
-                   th:value="${benefit.title}" required>
+            <input type="text"
+                   name="title"
+                   th:value="${benefit.title}"
+                   required>
 
             <label>Descripción</label>
             <textarea name="description"
-                      th:text="${benefit.description}" required></textarea>
+                      th:text="${benefit.description}"
+                      required></textarea>
 
-            <button class="btn" type="submit">Actualizar</button>
+            <button class="btn" type="submit">
+                Actualizar
+            </button>
+
         </form>
 
     </div>
