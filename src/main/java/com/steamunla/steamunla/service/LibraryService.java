@@ -95,5 +95,12 @@ public class LibraryService {
     return libraryRepository.save(entry);
     }
 
+    public void removeGameFromLibrary(User user, Game game) {
+        Library entry = libraryRepository.findByUserAndGame(user, game)
+                .orElseThrow(() -> new RuntimeException("El juego no está en la biblioteca"));
+
+        libraryRepository.delete(entry);
+    }
+
 
 }

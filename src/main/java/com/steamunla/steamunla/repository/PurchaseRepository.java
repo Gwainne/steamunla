@@ -1,7 +1,6 @@
 package com.steamunla.steamunla.repository;
 
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +13,5 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
 
     List<Purchase> findByUser(User user);
 
-    Optional<Purchase> findByUserAndGame(User user, Game game);
+    boolean existsByUserAndGame(User user, Game game);
 }

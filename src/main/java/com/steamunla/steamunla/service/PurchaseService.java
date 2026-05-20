@@ -31,7 +31,7 @@ public class PurchaseService {
      * @return true si el usuario ya posee el juego, false de lo contrario
      */
     public boolean hasUserAlreadyBoughtGame(User user, Game game) {
-        return purchaseRepository.findByUserAndGame(user, game).isPresent();
+        return purchaseRepository.existsByUserAndGame(user, game);
     }
 
     /**
@@ -44,9 +44,9 @@ public class PurchaseService {
      */
     public Purchase buyGame(User user, Game game, String paymentMethod) {
         
-        // Verificar si el usuario ya compró este juego
-        if (hasUserAlreadyBoughtGame(user, game)) {
-            throw new RuntimeException("Ya has comprado este juego");
+        // Verificar si el juego sigue activo en la biblioteca del usuario
+        if (libraryService.isGameInLibrary(user, game)) {
+            throw new RuntimeException("Ya tienes este juego en tu biblioteca");
         }
 
         Purchase purchase = new Purchase();

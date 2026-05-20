@@ -366,6 +366,19 @@
             border: 1px solid var(--border);
         }
         .btn-outline:hover { border-color: var(--text); color: var(--text); }
+
+        .notice {
+            margin: 1rem 2rem 0;
+            padding: 0.9rem 1rem;
+            border-radius: 8px;
+            border: 1px solid transparent;
+        }
+
+        .notice.error {
+            background: rgba(248, 113, 113, 0.08);
+            border-color: rgba(248, 113, 113, 0.35);
+            color: #fecaca;
+        }
     </style>
 </head>
 
@@ -408,6 +421,8 @@
     <button class="filter-btn">No instalados</button>
     <input type="text" class="search-input" placeholder="Buscar en biblioteca...">
 </div>
+
+<div class="notice error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
  
 <!-- MAIN -->
 <div class="main">
@@ -481,6 +496,12 @@
                         onclick="downloadAndInstall(event, this)">
                             ⬇ Instalar
                         </a>
+                        <a th:if="${#sets.contains(purchasedGameIds, entry.game.id)}"
+                           th:href="@{/library/return/{id}(id=${entry.game.id})}"
+                           class="btn btn-outline"
+                           style="flex: 1; color: var(--danger); border-color: var(--danger);">
+                            ↩ Devolver juego
+                        </a>
                     </div>
 
                     <!-- Si está instalado -->
@@ -490,6 +511,12 @@
                         class="btn btn-outline"
                         style="flex: 1; color: var(--danger); border-color: var(--danger);">
                             ✕ Desinstalar
+                        </a>
+                        <a th:if="${#sets.contains(purchasedGameIds, entry.game.id)}"
+                           th:href="@{/library/return/{id}(id=${entry.game.id})}"
+                           class="btn btn-outline"
+                           style="flex: 1; color: var(--danger); border-color: var(--danger);">
+                            ↩ Devolver juego
                         </a>
                     </div>
 

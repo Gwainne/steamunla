@@ -42,9 +42,9 @@ public class PurchaseController {
 
         Game game = gameService.getGameById(gameId);
 
-        // Verificar si el usuario ya compró este juego
-        if (purchaseService.hasUserAlreadyBoughtGame(user, game)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Ya has comprado este juego. Accede a tu biblioteca para jugarlo.");
+        // Verificar si el juego sigue en la biblioteca del usuario
+        if (libraryService.isGameInLibrary(user, game)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Ya tienes este juego en tu biblioteca. Accede a ella para jugarlo.");
             return "redirect:/games/" + gameId;
         }
 

@@ -16,6 +16,7 @@ import com.steamunla.steamunla.model.User;
 import com.steamunla.steamunla.service.GameService;
 import com.steamunla.steamunla.service.ReviewService;
 import com.steamunla.steamunla.service.PurchaseService;
+import com.steamunla.steamunla.service.LibraryService;
 import com.steamunla.steamunla.service.WishlistService;
 
 import jakarta.servlet.http.HttpSession;
@@ -23,7 +24,6 @@ import jakarta.validation.Valid;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
-import com.steamunla.steamunla.model.Purchase;
 import com.steamunla.steamunla.model.Review;
 
 import java.util.stream.Collectors;
@@ -42,6 +42,9 @@ public class GameController {
     private PurchaseService purchaseService;
 
     @Autowired
+    private LibraryService libraryService;
+
+    @Autowired
     private WishlistService wishlistService;
 
     private User getLoggedUser(HttpSession session) {
@@ -56,14 +59,12 @@ public class GameController {
         model.addAttribute("games", gameService.getAllGames());
         model.addAttribute("user", user);
 
-        // Si el usuario está logueado, obtener IDs de juegos que ya posee
-        Set<Long> ownedGameIds = new HashSet<>();
+        // Si el usuario está logueado, obtener IDs de juegos que siguen en su biblioteca
+        Set<Long> ownedGameIds = Set.of();
         Set<Long> wishlistGameIds = new HashSet<>();
         if (user != null) {
-            // Obtener todos los juegos comprados por el usuario
-            List<Purchase> purchases = purchaseService.getGamesPurchasedByUser(user);
-            ownedGameIds = purchases.stream()
-                    .map(p -> p.getGame().getId())
+            ownedGameIds = libraryService.getLibraryByUser(user).stream()
+                .map(entry -> entry.getGame().getId())
                     .collect(Collectors.toSet());
 
             wishlistGameIds = wishlistService.getWishlistByUser(user).stream()
@@ -85,10 +86,10 @@ public class GameController {
         Game game = gameService.getGameById(id);
         List<Review> reviews = reviewService.getReviewsByGame(game);
 
-        // Verificar si el usuario ya posee el juego
+        // Verificar si el usuario tiene el juego en la biblioteca activa
         boolean alreadyOwned = false;
         if (user != null) {
-            alreadyOwned = purchaseService.hasUserAlreadyBoughtGame(user, game);
+            alreadyOwned = libraryService.isGameInLibrary(user, game);
         }
 
         boolean inWishlist = false;
