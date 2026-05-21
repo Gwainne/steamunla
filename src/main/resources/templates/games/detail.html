@@ -221,7 +221,7 @@
             <div class="meta">
                 <span class="tag" th:text="${game.genre != null and !#strings.isEmpty(game.genre) ? game.genre : 'Sin género'}">Género</span>
                 <span class="tag" th:if="${game.releaseDate != null}" 
-                      th:text="${#dates.format(game.releaseDate, 'dd/MM/yyyy')}">Fecha de lanzamiento</span>
+                      th:text="${#temporals.format(game.releaseDate, 'dd/MM/yyyy')}">Fecha de lanzamiento</span>
             </div>
 
             <p class="description" th:text="${game.description != null and !#strings.isEmpty(game.description) ? game.description : 'Sin descripción disponible'}">
@@ -256,7 +256,7 @@
                 </div>
 
                 <!-- Botón de compra si no lo tiene -->
-                <form th:action="@{/purchases/checkout/{id}(id=${game.id})}" method="get" th:if="!${alreadyOwned}">
+                <form th:action="@{/purchases/checkout/{id}(id=${game.id})}" method="get" th:if="${!alreadyOwned}">
                     <button type="submit" class="btn primary" style="width: 100%;">
                         Comprar ahora
                     </button>
@@ -288,7 +288,7 @@
                 <div class="review-header">
                     <div>
                         <div class="review-user" th:text="${review.user.username}">Usuario</div>
-                        <div class="review-date" th:text="${#dates.format(review.createdAt, 'dd/MM/yyyy HH:mm')}">
+                        <div class="review-date" th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy HH:mm')}">
                             Fecha
                         </div>
                     </div>
@@ -304,6 +304,41 @@
 
         <div class="no-reviews" th:if="${#lists.isEmpty(reviews)}">
             Todavía no hay reseñas para este juego. ¡Sé el primero en dejar tu opinión!
+        </div>
+
+        <!-- Formulario para escribir reseña, solo si el usuario está logueado -->
+        <div th:if="${user != null}" style="margin-top:32px; padding-top:24px; border-top:1px solid #2a3347;">
+            <h3 style="font-family:'Rajdhani',sans-serif; font-size:1.4rem; margin-bottom:16px;">
+                Escribir una reseña
+            </h3>
+            <form th:action="@{/reviews/{id}(id=${game.id})}" method="post"
+                  style="display:flex; flex-direction:column; gap:12px;">
+                <div>
+                    <label style="display:block; margin-bottom:6px; color:#94a3b8; font-size:0.9rem;">
+                        Puntaje (1-5)
+                    </label>
+                    <input type="number"
+                           name="rating"
+                           min="1"
+                           max="5"
+                           required
+                           placeholder="Ej: 4"
+                           style="width:100%; padding:12px; border-radius:8px; border:1px solid #2a3347; background:#1e2536; color:#e2e8f0; font-size:1rem; font-family:'Inter',sans-serif;">
+                </div>
+                <div>
+                    <label style="display:block; margin-bottom:6px; color:#94a3b8; font-size:0.9rem;">
+                        Comentario (opcional)
+                    </label>
+                    <input type="text"
+                           name="comment"
+                           placeholder="¿Qué te pareció el juego?"
+                           style="width:100%; padding:12px; border-radius:8px; border:1px solid #2a3347; background:#1e2536; color:#e2e8f0; font-size:1rem; font-family:'Inter',sans-serif;">
+                </div>
+                <button type="submit"
+                        style="padding:12px 16px; border-radius:10px; border:none; background:linear-gradient(135deg,#4d9fff,#2d6cdf); color:white; font-size:1rem; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">
+                    Enviar reseña
+                </button>
+            </form>
         </div>
     </div>
 </div>

@@ -19,6 +19,11 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @GetMapping("/")
+    public String home() {
+        return "redirect:/games";
+    }
+
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
 

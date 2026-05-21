@@ -79,7 +79,19 @@
             display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;
         }
         .card {
-            background: #161b26; border: 1px solid #2a3347; border-radius: 16px; overflow: hidden;
+            background: #161b26;
+            border: 1px solid #2a3347;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.2s, transform 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .card:hover {
+            border-color: #4d9fff;
+            transform: translateY(-2px);
         }
         .cover {
             height: 160px; background: linear-gradient(135deg, #1e2536, #0f1420); display: flex;
@@ -173,7 +185,7 @@
             <p style="color:#64748b; font-size:1rem; margin-top:4px;">Basado en los géneros que ya jugás</p>
         </div>
         <div class="grid">
-            <article class="card" th:each="game : ${recommendations}">
+            <a class="card" th:each="game : ${recommendations}" th:href="@{/games/{id}(id=${game.id})}">
                 <div class="cover">
                     <img th:if="${game.imageUrl != null and !#strings.isEmpty(game.imageUrl)}"
                          th:src="${game.imageUrl}" th:alt="${game.title}">
@@ -201,12 +213,8 @@
                     <div class="meta" style="margin-top:8px;">
                         <span class="tag">⭐ <span th:text="${game.averageRating != null ? game.averageRating : 0}"></span>/5</span>
                     </div>
-                    <div style="margin-top:14px;">
-                        <a th:href="@{/games/{id}(id=${game.id})}" class="btn primary"
-                           style="text-align:center; display:block;">Ver detalle</a>
-                    </div>
                 </div>
-            </article>
+            </a>
         </div>
     </div>
 
@@ -217,7 +225,7 @@
             <p style="color:#64748b; font-size:1rem; margin-top:4px;">Géneros que todavía no exploraste</p>
         </div>
         <div class="grid">
-            <article class="card" th:each="game : ${discoveryGames}">
+            <a class="card" th:each="game : ${discoveryGames}" th:href="@{/games/{id}(id=${game.id})}">
                 <div class="cover">
                     <img th:if="${game.imageUrl != null and !#strings.isEmpty(game.imageUrl)}"
                          th:src="${game.imageUrl}" th:alt="${game.title}">
@@ -245,12 +253,8 @@
                     <div class="meta" style="margin-top:8px;">
                         <span class="tag">⭐ <span th:text="${game.averageRating != null ? game.averageRating : 0}"></span>/5</span>
                     </div>
-                    <div style="margin-top:14px;">
-                        <a th:href="@{/games/{id}(id=${game.id})}" class="btn primary"
-                           style="text-align:center; display:block;">Ver detalle</a>
-                    </div>
                 </div>
-            </article>
+            </a>
         </div>
     </div>
 
@@ -265,11 +269,13 @@
     </div>
 
     <div class="grid" id="mainGrid" th:if="${!#lists.isEmpty(games)}">
-        <article class="card"
+        <a class="card"
             th:each="game : ${games}"
+            th:href="@{/games/{id}(id=${game.id})}"
             th:attr="data-title=${game.title.toLowerCase()}, data-genre=${game.genre != null ? game.genre.toLowerCase() : ''}">
             <div class="cover">
-                <img th:if="${game.imageUrl != null and !#strings.isEmpty(game.imageUrl)}" th:src="${game.imageUrl}" th:alt="${game.title}">
+                <img th:if="${game.imageUrl != null and !#strings.isEmpty(game.imageUrl)}"
+                     th:src="${game.imageUrl}" th:alt="${game.title}">
                 <span th:if="${game.imageUrl == null or #strings.isEmpty(game.imageUrl)}">Sin portada</span>
             </div>
             <div class="body">
@@ -277,7 +283,6 @@
                 <div class="meta">
                     <span class="tag" th:text="${game.genre != null and !#strings.isEmpty(game.genre) ? game.genre : 'Sin género'}">Género</span>
                     <span class="tag" th:text="${game.developerName}">Desarrollador</span>
-                    <span class="tag" th:text="${game.active ? 'Activo' : 'Inactivo'}">Estado</span>
                 </div>
                 <p class="desc" th:text="${game.description != null and !#strings.isEmpty(game.description) ? game.description : 'Sin descripción'}"></p>
                 <div class="price">
@@ -290,84 +295,16 @@
                     </span>
                     <span th:if="${activePromotions[game.id] == null}" th:text="${'$' + #numbers.formatDecimal(game.price != null ? game.price : 0, 1, 2)}"></span>
                 </div>
-                
                 <div class="meta" style="margin-top:12px;">
-    <span class="tag">
-        ⭐ <span th:text="${game.averageRating != null ? game.averageRating : 0}"></span>/5
-    </span>
-</div>
-
-<div class="actions" style="margin-top:14px; display:flex; flex-direction:column; gap:12px;">
-
-    <!-- Ver detalle -->
-    <a th:href="@{/games/{id}(id=${game.id})}" class="btn" style="text-align:center;">
-        Ver detalle
-    </a>
-
-    <!-- Comprar o Ya en biblioteca -->
-    <th:block th:if="${#sets.contains(ownedGameIds, game.id)}">
-        <!-- Si el usuario ya tiene el juego -->
-        <div style="background: rgba(74, 222, 128, 0.12); border: 1px solid rgba(74, 222, 128, 0.35); color: #bbf7d0; padding: 10px 12px; border-radius: 8px; text-align: center; font-size: 0.9rem;">
-            ✓ Ya en biblioteca
-        </div>
-    </th:block>
-
-    <th:block th:unless="${#sets.contains(ownedGameIds, game.id)}">
-        <!-- Si el usuario no tiene el juego -->
-        <a th:href="@{/games/{id}(id=${game.id})}" class="btn primary" style="text-align:center; display:block;">
-            Comprar
-        </a>
-
-        <div th:if="${user != null and !#sets.contains(ownedGameIds, game.id)}" style="display:flex; flex-direction:column; gap:8px;">
-            <a th:href="@{/wishlist/add/{gameId}(gameId=${game.id})}" class="btn" th:unless="${#sets.contains(wishlistGameIds, game.id)}">
-                Agregar a wishlist
-            </a>
-            <a th:href="@{/wishlist/remove/{gameId}(gameId=${game.id})}" class="btn" th:if="${#sets.contains(wishlistGameIds, game.id)}">
-                Quitar de wishlist
-            </a>
-        </div>
-    </th:block>
-
-    <!-- Reseña -->
-    <details>
-        <summary class="btn" style="cursor:pointer;">
-            Escribir reseña
-        </summary>
-
-        <form th:action="@{/reviews/{id}(id=${game.id})}" method="post"
-              style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
-
-            <input type="number"
-                   name="rating"
-                   min="1"
-                   max="5"
-                   required
-                   placeholder="Puntaje (1-5)"
-                   style="padding:10px; border-radius:8px; border:1px solid #2a3347; background:#1e2536; color:white;">
-
-            <input type="text"
-                   name="comment"
-                   placeholder="Comentario"
-                   style="padding:10px; border-radius:8px; border:1px solid #2a3347; background:#1e2536; color:white;">
-
-            <button type="submit" class="btn">
-                Enviar reseña
-            </button>
-
-        </form>
-    </details>
-
-</div>
-
-
-
-
-
-
+                    <span class="tag">⭐ <span th:text="${game.averageRating != null ? game.averageRating : 0}"></span>/5</span>
+                </div>
+                <div th:if="${#sets.contains(ownedGameIds, game.id)}"
+                     style="margin-top:12px; background:rgba(74,222,128,0.12); border:1px solid rgba(74,222,128,0.35); color:#bbf7d0; padding:8px 12px; border-radius:8px; text-align:center; font-size:0.85rem;">
+                    ✓ Ya en biblioteca
+                </div>
             </div>
-        </article>
+        </a>
     </div>
-</div>
 
 <script>
     let activeGenre = 'all';
@@ -386,7 +323,10 @@
             btn.className = 'genre-chip';
             btn.dataset.genre = genre;
             btn.textContent = genre.charAt(0).toUpperCase() + genre.slice(1);
-            btn.onclick = () => filterByGenre(genre);
+            btn.onclick = (e) => {
+                e.preventDefault();
+                filterByGenre(genre);
+            };
             container.appendChild(btn);
         });
     });
@@ -405,7 +345,6 @@
         const query = document.getElementById('searchInput').value.toLowerCase().trim();
         const cards = document.querySelectorAll('#mainGrid .card');
 
-        // Ocultar secciones de recomendaciones si hay búsqueda o filtro activo
         const hayFiltro = query !== '' || activeGenre !== 'all';
         document.querySelectorAll('.recommendation-section').forEach(sec => {
             sec.style.display = hayFiltro ? 'none' : '';
