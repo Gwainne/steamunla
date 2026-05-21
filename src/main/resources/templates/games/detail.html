@@ -228,8 +228,15 @@
                 Descripción del juego
             </p>
 
-            <div class="price" th:text="${'$' + #numbers.formatDecimal(game.price != null ? game.price : 0, 1, 2)}">
-                $9.99
+            <div class="price">
+                <span th:if="${activePromotion != null}">
+                    <span style="text-decoration:line-through; color:#64748b; font-size:1.2rem;" th:text="${'$' + #numbers.formatDecimal(game.price, 1, 2)}"></span>
+                    &nbsp;
+                    <span th:text="${'$' + #numbers.formatDecimal(discountedPrice, 1, 2)}"></span>
+                    &nbsp;
+                    <span style="font-size:0.9rem; color:#fbbf24; background:rgba(251,191,36,0.15); padding:2px 8px; border-radius:6px;" th:text="${activePromotion.discountPercent.intValue() + '% OFF'}"></span>
+                </span>
+                <span th:if="${activePromotion == null}" th:text="${'$' + #numbers.formatDecimal(game.price != null ? game.price : 0, 1, 2)}"></span>
             </div>
 
             <div class="rating-section">

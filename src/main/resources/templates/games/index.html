@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juegos publicados — SteamUNLA</title>
+    <title>Tienda — SteamUNLA</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -64,7 +64,7 @@
         }
         .brand { font-family: 'Rajdhani', sans-serif; font-size: 2.1rem; font-weight: 700; color: #4d9fff; }
         .title { margin: 0; font-family: 'Rajdhani', sans-serif; font-size: 2.5rem; }
-        .subtitle { margin: 8px 0 0; color: #94a3b8; }
+        .subtitle { margin: 8px 0 0; color: #94a3b8; font-size: 1rem; }
         .actions { display: flex; gap: 12px; }
         .btn {
             border-radius: 10px; padding: 12px 16px; text-decoration: none; border: 1px solid #2a3347;
@@ -98,6 +98,19 @@
         .empty {
             padding: 60px 20px; text-align: center; color: #94a3b8; border: 1px dashed #2a3347; border-radius: 16px;
         }
+        .genre-chip {
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid #2a3347;
+            background: #1e2536;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .genre-chip:hover { border-color: #4d9fff; color: #e2e8f0; }
+        .genre-chip.active { background: #4d9fff22; border-color: #4d9fff; color: #4d9fff; }
     </style>
 </head>
 <body>
@@ -123,23 +136,138 @@
 <div class="wrap">
     <div class="head">
         <div>
-            <h1 class="title">Juegos publicados</h1>
-            <p class="subtitle">Acá ves los juegos que se guardaron desde el formulario de publicación.</p>
+            <h1 class="title">Tienda</h1>
+            <p class="subtitle">Explorá el catálogo de juegos disponibles.</p>
         </div>
         <div class="actions">
-            <a class="btn" th:href="@{/library}">Ir a biblioteca</a>
-            <a class="btn primary" th:href="@{/games/new}">Publicar nuevo</a>
+            <a class="btn" th:href="@{/library}">Mi biblioteca</a>
+            <a class="btn primary" th:href="@{/games/my-games}" th:if="${user != null and hasPublishedGames}">
+                Mis juegos publicados
+            </a>
         </div>
     </div>
 
     <div class="notice" th:if="${successMessage}" th:text="${successMessage}"></div>
 
-    <div th:if="${#lists.isEmpty(games)}" class="empty">
-        Todavía no hay juegos publicados. Creá el primero con el botón de arriba.
+    <!-- Buscador y filtros de género -->
+    <div style="margin-bottom:28px; display:flex; flex-direction:column; gap:16px;">
+        <div style="position:relative;">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Buscar juego..."
+                style="width:100%; padding:12px 16px 12px 42px; border-radius:10px; border:1px solid #2a3347; background:#161b26; color:#e2e8f0; font-size:0.95rem; font-family:'Inter',sans-serif; outline:none;"
+                oninput="filterGames()"
+            >
+            <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#64748b; font-size:1rem;">🔍</span>
+        </div>
+        <div id="genreFilters" style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button onclick="filterByGenre('all')" class="genre-chip active" data-genre="all">Todos</button>
+        </div>
     </div>
 
-    <div class="grid" th:if="${!#lists.isEmpty(games)}">
-        <article class="card" th:each="game : ${games}">
+    <!-- Seccion Recomendado para vos -->
+    <div class="recommendation-section" th:if="${user != null and !#lists.isEmpty(recommendations)}" style="margin-bottom:40px;">
+        <div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #2a3347;">
+            <h2 style="font-family:'Rajdhani',sans-serif; font-size:1.8rem; color:#4d9fff;">Recomendado para vos</h2>
+            <p style="color:#64748b; font-size:1rem; margin-top:4px;">Basado en los géneros que ya jugás</p>
+        </div>
+        <div class="grid">
+            <article class="card" th:each="game : ${recommendations}">
+                <div class="cover">
+                    <img th:if="${game.imageUrl != null and !#strings.isEmpty(game.imageUrl)}"
+                         th:src="${game.imageUrl}" th:alt="${game.title}">
+                    <span th:if="${game.imageUrl == null or #strings.isEmpty(game.imageUrl)}">Sin portada</span>
+                </div>
+                <div class="body">
+                    <h2 class="name" th:text="${game.title}">Título</h2>
+                    <div class="meta">
+                        <span class="tag" th:text="${game.genre}"></span>
+                        <span class="tag" th:text="${game.developerName}"></span>
+                    </div>
+                    <div class="price">
+                        <span th:if="${activePromotions[game.id] != null}">
+                            <span style="text-decoration:line-through; color:#64748b;"
+                                  th:text="${'$' + #numbers.formatDecimal(game.price, 1, 2)}"></span>
+                            &nbsp;
+                            <span th:text="${'$' + #numbers.formatDecimal(discountedPrices[game.id], 1, 2)}"></span>
+                            &nbsp;
+                            <span style="font-size:0.8rem; color:#fbbf24; background:rgba(251,191,36,0.15); padding:2px 6px; border-radius:6px;"
+                                  th:text="${activePromotions[game.id].discountPercent.intValue() + '% OFF'}"></span>
+                        </span>
+                        <span th:if="${activePromotions[game.id] == null}"
+                              th:text="${'$' + #numbers.formatDecimal(game.price != null ? game.price : 0, 1, 2)}"></span>
+                    </div>
+                    <div class="meta" style="margin-top:8px;">
+                        <span class="tag">⭐ <span th:text="${game.averageRating != null ? game.averageRating : 0}"></span>/5</span>
+                    </div>
+                    <div style="margin-top:14px;">
+                        <a th:href="@{/games/{id}(id=${game.id})}" class="btn primary"
+                           style="text-align:center; display:block;">Ver detalle</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    <!-- Seccion Descubrí algo nuevo -->
+    <div class="recommendation-section" th:if="${user != null and !#lists.isEmpty(discoveryGames)}" style="margin-bottom:40px;">
+        <div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #2a3347;">
+            <h2 style="font-family:'Rajdhani',sans-serif; font-size:1.8rem; color:#a78bfa;">Descubrí algo nuevo</h2>
+            <p style="color:#64748b; font-size:1rem; margin-top:4px;">Géneros que todavía no exploraste</p>
+        </div>
+        <div class="grid">
+            <article class="card" th:each="game : ${discoveryGames}">
+                <div class="cover">
+                    <img th:if="${game.imageUrl != null and !#strings.isEmpty(game.imageUrl)}"
+                         th:src="${game.imageUrl}" th:alt="${game.title}">
+                    <span th:if="${game.imageUrl == null or #strings.isEmpty(game.imageUrl)}">Sin portada</span>
+                </div>
+                <div class="body">
+                    <h2 class="name" th:text="${game.title}">Título</h2>
+                    <div class="meta">
+                        <span class="tag" th:text="${game.genre}"></span>
+                        <span class="tag" th:text="${game.developerName}"></span>
+                    </div>
+                    <div class="price">
+                        <span th:if="${activePromotions[game.id] != null}">
+                            <span style="text-decoration:line-through; color:#64748b;"
+                                  th:text="${'$' + #numbers.formatDecimal(game.price, 1, 2)}"></span>
+                            &nbsp;
+                            <span th:text="${'$' + #numbers.formatDecimal(discountedPrices[game.id], 1, 2)}"></span>
+                            &nbsp;
+                            <span style="font-size:0.8rem; color:#fbbf24; background:rgba(251,191,36,0.15); padding:2px 6px; border-radius:6px;"
+                                  th:text="${activePromotions[game.id].discountPercent.intValue() + '% OFF'}"></span>
+                        </span>
+                        <span th:if="${activePromotions[game.id] == null}"
+                              th:text="${'$' + #numbers.formatDecimal(game.price != null ? game.price : 0, 1, 2)}"></span>
+                    </div>
+                    <div class="meta" style="margin-top:8px;">
+                        <span class="tag">⭐ <span th:text="${game.averageRating != null ? game.averageRating : 0}"></span>/5</span>
+                    </div>
+                    <div style="margin-top:14px;">
+                        <a th:href="@{/games/{id}(id=${game.id})}" class="btn primary"
+                           style="text-align:center; display:block;">Ver detalle</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    <!-- Separador antes de Todos los juegos -->
+    <div style="margin: 32px 0 24px;">
+        <h2 style="font-family:'Rajdhani',sans-serif; font-size:1.8rem; margin-bottom:4px;">Todos los juegos</h2>
+        <div style="height:2px; background: linear-gradient(90deg, #4d9fff33, transparent); margin-top:12px;"></div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(games)}" class="empty">
+        Todavía no hay juegos disponibles en la tienda.
+    </div>
+
+    <div class="grid" id="mainGrid" th:if="${!#lists.isEmpty(games)}">
+        <article class="card"
+            th:each="game : ${games}"
+            th:attr="data-title=${game.title.toLowerCase()}, data-genre=${game.genre != null ? game.genre.toLowerCase() : ''}">
             <div class="cover">
                 <img th:if="${game.imageUrl != null and !#strings.isEmpty(game.imageUrl)}" th:src="${game.imageUrl}" th:alt="${game.title}">
                 <span th:if="${game.imageUrl == null or #strings.isEmpty(game.imageUrl)}">Sin portada</span>
@@ -152,7 +280,16 @@
                     <span class="tag" th:text="${game.active ? 'Activo' : 'Inactivo'}">Estado</span>
                 </div>
                 <p class="desc" th:text="${game.description != null and !#strings.isEmpty(game.description) ? game.description : 'Sin descripción'}"></p>
-                <div class="price" th:text="${'$' + #numbers.formatDecimal(game.price != null ? game.price : 0, 1, 2)}"></div>
+                <div class="price">
+                    <span th:if="${activePromotions[game.id] != null}">
+                        <span style="text-decoration:line-through; color:#64748b;" th:text="${'$' + #numbers.formatDecimal(game.price, 1, 2)}"></span>
+                        &nbsp;
+                        <span th:text="${'$' + #numbers.formatDecimal(discountedPrices[game.id], 1, 2)}"></span>
+                        &nbsp;
+                        <span style="font-size:0.8rem; color:#fbbf24; background:rgba(251,191,36,0.15); padding:2px 6px; border-radius:6px;" th:text="${activePromotions[game.id].discountPercent.intValue() + '% OFF'}"></span>
+                    </span>
+                    <span th:if="${activePromotions[game.id] == null}" th:text="${'$' + #numbers.formatDecimal(game.price != null ? game.price : 0, 1, 2)}"></span>
+                </div>
                 
                 <div class="meta" style="margin-top:12px;">
     <span class="tag">
@@ -177,20 +314,9 @@
 
     <th:block th:unless="${#sets.contains(ownedGameIds, game.id)}">
         <!-- Si el usuario no tiene el juego -->
-        <form th:action="@{/purchases/checkout/{id}(id=${game.id})}" method="get"
-              style="display:flex; gap:8px;">
-
-            <select name="paymentMethod"
-                    style="flex:1; padding:10px; border-radius:8px; border:1px solid #2a3347; background:#1e2536; color:white;">
-                <option value="Tarjeta">Tarjeta</option>
-                <option value="MercadoPago">MercadoPago</option>
-                <option value="PayPal">PayPal</option>
-            </select>
-
-            <button type="submit" class="btn primary">
-                Comprar
-            </button>
-        </form>
+        <a th:href="@{/games/{id}(id=${game.id})}" class="btn primary" style="text-align:center; display:block;">
+            Comprar
+        </a>
 
         <div th:if="${user != null and !#sets.contains(ownedGameIds, game.id)}" style="display:flex; flex-direction:column; gap:8px;">
             <a th:href="@{/wishlist/add/{gameId}(gameId=${game.id})}" class="btn" th:unless="${#sets.contains(wishlistGameIds, game.id)}">
@@ -242,5 +368,59 @@
         </article>
     </div>
 </div>
+
+<script>
+    let activeGenre = 'all';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('#mainGrid .card');
+        const genres = new Set();
+        cards.forEach(card => {
+            const genre = card.dataset.genre;
+            if (genre) genres.add(genre);
+        });
+
+        const container = document.getElementById('genreFilters');
+        genres.forEach(genre => {
+            const btn = document.createElement('button');
+            btn.className = 'genre-chip';
+            btn.dataset.genre = genre;
+            btn.textContent = genre.charAt(0).toUpperCase() + genre.slice(1);
+            btn.onclick = () => filterByGenre(genre);
+            container.appendChild(btn);
+        });
+    });
+
+    function filterByGenre(genre) {
+        activeGenre = genre;
+
+        document.querySelectorAll('.genre-chip').forEach(chip => {
+            chip.classList.toggle('active', chip.dataset.genre === genre);
+        });
+
+        filterGames();
+    }
+
+    function filterGames() {
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+        const cards = document.querySelectorAll('#mainGrid .card');
+
+        // Ocultar secciones de recomendaciones si hay búsqueda o filtro activo
+        const hayFiltro = query !== '' || activeGenre !== 'all';
+        document.querySelectorAll('.recommendation-section').forEach(sec => {
+            sec.style.display = hayFiltro ? 'none' : '';
+        });
+
+        cards.forEach(card => {
+            const title = card.dataset.title || '';
+            const genre = card.dataset.genre || '';
+
+            const matchesSearch = query === '' || title.includes(query);
+            const matchesGenre = activeGenre === 'all' || genre === activeGenre;
+
+            card.style.display = (matchesSearch && matchesGenre) ? '' : 'none';
+        });
+    }
+</script>
 </body>
 </html>

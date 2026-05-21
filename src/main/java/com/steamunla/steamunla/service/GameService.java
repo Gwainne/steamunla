@@ -39,4 +39,12 @@ public class GameService {
         }
         return gameRepository.save(game);
     }
+
+    public boolean hasUserPublishedGames(User user) {
+        return gameRepository.existsByPublisher(user);
+    }
+
+    public List<Game> getGamesByPublisher(User user) {
+        return gameRepository.findByPublisher(user);
+    }
 }

@@ -12,4 +12,14 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     List<Game> findAllByOrderByCreatedAtDesc();
 
     List<Game> findByPublisher(User publisher);
+
+    List<Game> findByGenreInAndIdNotInOrderByAverageRatingDesc(List<String> genres, List<Long> excludedIds);
+
+    List<Game> findByGenreInOrderByAverageRatingDesc(List<String> genres);
+
+    List<Game> findByIdNotInOrderByAverageRatingDesc(List<Long> excludedIds);
+
+    List<Game> findAllByOrderByAverageRatingDesc();
+
+    boolean existsByPublisher(User publisher);
 }
