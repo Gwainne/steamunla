@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import com.steamunla.steamunla.model.Game;
-import com.steamunla.steamunla.model.Library;
 import com.steamunla.steamunla.model.Promotion;
 import com.steamunla.steamunla.model.User;
 import com.steamunla.steamunla.repository.GameRepository;
 import com.steamunla.steamunla.repository.LibraryRepository;
 import com.steamunla.steamunla.repository.PromotionRepository;
 import com.steamunla.steamunla.repository.UserRepository;
+import com.steamunla.steamunla.service.PurchaseService;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -27,6 +27,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private PromotionRepository promotionRepository;
+
+    @Autowired
+    private PurchaseService purchaseService;
 
     @Override
     public void run(String... args) {
@@ -168,18 +171,11 @@ public class DataInitializer implements CommandLineRunner {
             phasmophobia.setPublisher(publisher); phasmophobia.setActive(true); phasmophobia.setCreatedAt(LocalDateTime.now()); phasmophobia.setImageUrl("https://cdn.cloudflare.steamstatic.com/steam/apps/739630/header.jpg");
             gameRepository.save(phasmophobia);
 
-            // Biblioteca del usuario test
-            Library lib1 = new Library();
-            lib1.setUser(testUser); lib1.setGame(cs2); lib1.setInstalled(true); lib1.setAddedAt(LocalDateTime.now());
-            libraryRepository.save(lib1);
-
-            Library lib2 = new Library();
-            lib2.setUser(testUser); lib2.setGame(eldenRing); lib2.setInstalled(true); lib2.setAddedAt(LocalDateTime.now());
-            libraryRepository.save(lib2);
-
-            Library lib3 = new Library();
-            lib3.setUser(testUser); lib3.setGame(civ6); lib3.setInstalled(false); lib3.setAddedAt(LocalDateTime.now());
-            libraryRepository.save(lib3);
+            // Biblioteca del usuario test usando PurchaseService
+            // Así se crean tanto los registros en purchases como en library
+            purchaseService.buyGame(testUser, cs2, "CREDIT_CARD");
+            purchaseService.buyGame(testUser, eldenRing, "CREDIT_CARD");
+            purchaseService.buyGame(testUser, civ6, "CREDIT_CARD");
 
             // Promociones activas
             Promotion p1 = new Promotion();
