@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Actualizaciones — ' + ${game.title}">Actualizaciones</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0e1117;
+            --surface: #161b26;
+            --surface2: #1e2536;
+            --border: #2a3347;
+            --accent: #4d9fff;
+            --green: #4ade80;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; min-height: 100vh; }
+        a { color: inherit; text-decoration: none; }
+        nav {
+            background: var(--surface); border-bottom: 1px solid var(--border);
+            padding: 0 2rem; height: 56px; display: flex; align-items: center;
+            justify-content: space-between; position: sticky; top: 0; z-index: 100;
+        }
+        .nav-logo { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--accent); letter-spacing: 2px; }
+        .nav-links { display: flex; gap: 1.5rem; }
+        .nav-links a { color: var(--muted); font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text); }
+        .wrap { max-width: 900px; margin: 0 auto; padding: 28px 24px 40px; }
+        .back-link { display: inline-block; color: var(--accent); margin-bottom: 24px; font-size: 0.9rem; }
+        .back-link:hover { text-decoration: underline; }
+        .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+        .panel {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 24px;
+        }
+        .panel-title {
+            font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; font-weight: 700;
+            margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
+        }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 0.82rem; }
+        input, textarea {
+            width: 100%; padding: 10px 12px; border: 1px solid var(--border);
+            border-radius: 8px; background: var(--surface2); color: var(--text);
+            font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none;
+        }
+        input:focus, textarea:focus { border-color: var(--accent); }
+        textarea { min-height: 120px; resize: vertical; }
+        .btn {
+            width: 100%; padding: 11px; border-radius: 8px; border: none;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: all 0.2s;
+        }
+        .btn-primary { background: linear-gradient(135deg, #4d9fff, #2d6cdf); color: #fff; }
+        .btn-primary:hover { background: linear-gradient(135deg, #6baaff, #3d7cef); }
+
+        /* Lista de updates */
+        .update-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .update-item {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; padding: 1rem;
+        }
+        .update-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .update-version {
+            font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700;
+            color: var(--accent); background: rgba(77,159,255,0.1);
+            border: 1px solid rgba(77,159,255,0.25); padding: 2px 10px; border-radius: 4px;
+        }
+        .update-date { font-size: 0.75rem; color: var(--muted); }
+        .update-notes { font-size: 0.82rem; color: #94a3b8; line-height: 1.6; }
+
+        .empty { text-align: center; padding: 2rem; color: var(--muted); font-size: 0.85rem; }
+
+        .notice {
+            margin-bottom: 1rem; padding: 0.75rem 1rem; border-radius: 8px;
+            background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.35); color: #bbf7d0;
+            font-size: 0.85rem;
+        }
+
+        .game-badge {
+            display: flex; align-items: center; gap: 0.75rem;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1.5rem;
+        }
+        .game-badge img { width: 48px; height: 30px; object-fit: cover; border-radius: 3px; }
+        .game-badge-name { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; }
+        .game-badge-dev { font-size: 0.75rem; color: var(--muted); }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="nav-logo">STEAMUNLA</a>
+    <div class="nav-links">
+        <a href="/games">Tienda</a>
+        <a href="/games/new" th:if="${user != null and user.role == 'DEVELOPER'}">Publicar juego</a>
+        <a href="/library">Biblioteca</a>
+        <a href="/wishlist">Lista de deseados</a>
+    </div>
+    <div class="nav-links" th:if="${user != null}">
+        <a href="/profile" th:text="${user.username}">usuario</a>
+        <a href="/logout">Salir</a>
+    </div>
+    <div class="nav-links" th:if="${user == null}">
+        <a href="/login">Ingresar</a>
+        <a href="/register">Registrarse</a>
+    </div>
+</nav>
+
+<div class="wrap">
+    <a href="/games/my-games" class="back-link">← Volver a mis juegos</a>
+
+    <div class="notice" th:if="${successMessage}" th:text="${successMessage}"></div>
+
+    <!-- Info del juego -->
+    <div class="game-badge">
+        <img th:if="${game.imageUrl != null}" th:src="${game.imageUrl}" th:alt="${game.title}">
+        <div>
+            <div class="game-badge-name" th:text="${game.title}">Juego</div>
+            <div class="game-badge-dev" th:text="${game.developerName}">Desarrollador</div>
+        </div>
+    </div>
+
+    <div class="layout">
+
+        <!-- Formulario nueva actualización -->
+        <div class="panel">
+            <div class="panel-title">Publicar actualización</div>
+            <form th:action="@{/updates/create}" method="post">
+                <input type="hidden" name="gameId" th:value="${game.id}">
+                <div class="form-group">
+                    <label>Versión</label>
+                    <input type="text" name="version" placeholder="Ej: 1.2.3" required>
+                </div>
+                <div class="form-group">
+                    <label>Notas del parche</label>
+                    <textarea name="patchNotes" placeholder="Describí los cambios de esta versión..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Publicar actualización</button>
+            </form>
+        </div>
+
+        <!-- Historial de actualizaciones -->
+        <div class="panel">
+            <div class="panel-title">Historial de actualizaciones</div>
+
+            <div class="empty" th:if="${updates.empty}">
+                Todavía no publicaste ninguna actualización.
+            </div>
+
+            <div class="update-list" th:unless="${updates.empty}">
+                <div class="update-item" th:each="update : ${updates}">
+                    <div class="update-header">
+                        <span class="update-version" th:text="'v' + ${update.version}">v1.0.0</span>
+                        <span class="update-date"
+                              th:text="${#temporals.format(update.releaseDate, 'dd/MM/yyyy')}">
+                            01/01/2024
+                        </span>
+                    </div>
+                    <div class="update-notes"
+                         th:text="${update.patchNotes != null ? update.patchNotes : 'Sin notas'}">
+                        Notas del parche
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

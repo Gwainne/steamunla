@@ -6,9 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import com.steamunla.steamunla.model.Game;
 import com.steamunla.steamunla.model.Review;
+import com.steamunla.steamunla.model.User;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findByGame(Game game);
+    List<Review> findByUser(User user);
 }

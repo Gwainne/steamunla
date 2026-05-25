@@ -98,12 +98,12 @@
     <a href="/" class="nav-logo">STEAMUNLA</a>
     <div class="nav-links">
         <a href="/games">Tienda</a>
-        <a href="/games/new">Publicar juego</a>
+        <a href="/games/new" th:if="${user != null and user.role == 'DEVELOPER'}">Publicar juego</a>
         <a href="/library">Biblioteca</a>
         <a href="/wishlist">Lista de deseados</a>
     </div>
     <div class="nav-links" th:if="${user != null}">
-        <a href="#" th:text="'Hola, ' + ${user.username}">Hola, usuario</a>
+        <a href="/profile" th:text="${user.username}">usuario</a>
         <a href="/logout">Salir</a>
     </div>
     <div class="nav-links" th:if="${user == null}">
@@ -151,6 +151,9 @@
                     <a th:href="@{/games/{id}(id=${game.id})}" class="btn" style="text-align:center; display:block;">Ver detalle</a>
                     <a th:href="@{/promotions/new/{id}(id=${game.id})}" class="btn primary" style="text-align:center; display:block; margin-top:10px;">
                         Agregar promoción
+                    </a>
+                    <a th:href="@{/updates/new/{id}(id=${game.id})}" class="btn" style="text-align:center; display:block; margin-top:10px;">
+                        Gestionar actualizaciones
                     </a>
                 </div>
             </div>

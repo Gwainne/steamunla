@@ -56,4 +56,10 @@ public class ReviewService {
 
         gameRepository.save(game);
     }
+
+    
+    public List<Review> getReviewsByUser(User user) {
+        return reviewRepository.findByUser(user);
+    }
+
 }

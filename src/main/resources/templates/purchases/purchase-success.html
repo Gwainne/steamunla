@@ -132,7 +132,7 @@
         <a href="/library">Biblioteca</a>
     </div>
     <div class="nav-links" th:if="${user != null}">
-        <a href="#" th:text="'Hola, ' + ${user.username}">Hola, usuario</a>
+        <a href="/profile" th:text="${user.username}">usuario</a>
         <a href="/logout">Salir</a>
     </div>
     <div class="nav-links" th:if="${user == null}">

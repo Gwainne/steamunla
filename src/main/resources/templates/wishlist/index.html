@@ -101,12 +101,12 @@
     <a href="/" class="nav-logo">STEAMUNLA</a>
     <div class="nav-links">
         <a href="/games">Tienda</a>
-        <a href="/games/new">Publicar juego</a>
+        <a href="/games/new" th:if="${user != null and user.role == 'DEVELOPER'}">Publicar juego</a>
         <a href="/library">Biblioteca</a>
         <a href="/wishlist" class="active">Lista de deseados</a>
     </div>
     <div class="nav-links">
-        <a href="#" th:text="'Hola, ' + ${user.username}">Hola, usuario</a>
+        <a href="/profile" th:text="${user.username}">usuario</a>
         <a href="/logout">Salir</a>
     </div>
 </nav>

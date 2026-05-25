@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${user.username} + ' — SteamUNLA'">Perfil — SteamUNLA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:         #0e1117;
+            --surface:    #161b26;
+            --surface2:   #1e2536;
+            --border:     #2a3347;
+            --muted:      #64748b;
+            --accent:     #4d9fff;
+            --accent-dim: #0d2240;
+            --accent2:    #38bdf8;
+            --green:      #4ade80;
+            --green-dim:  #052e16;
+            --yellow:     #fbbf24;
+            --text:       #e2e8f0;
+            --danger:     #f87171;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            min-height: 100vh;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        /* ── NAV ── */
+        nav {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-logo {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 2px;
+        }
+        .nav-links { display: flex; gap: 1.5rem; }
+        .nav-links a {
+            color: var(--muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.4px;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); }
+
+        /* ── HERO BANNER ── */
+        .hero {
+            height: 180px;
+            background: linear-gradient(135deg, #0d1f35 0%, #091629 40%, #050d1a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 80% at 20% 50%, rgba(77,159,255,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 60% at 80% 30%, rgba(56,189,248,0.07) 0%, transparent 70%);
+        }
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(77,159,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(77,159,255,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* ── PROFILE HEADER ── */
+        .profile-header {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+        }
+        .profile-identity {
+            display: flex;
+            align-items: flex-end;
+            gap: 1.5rem;
+            transform: translateY(-40px);
+            margin-bottom: -20px;
+        }
+
+        /* Avatar */
+        .avatar-wrap {
+            position: relative;
+            flex-shrink: 0;
+        }
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            border: 3px solid var(--accent);
+            background: var(--surface2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            box-shadow: 0 0 30px rgba(77,159,255,0.3), 0 8px 32px rgba(0,0,0,0.5);
+            text-transform: uppercase;
+        }
+        .avatar-online {
+            position: absolute;
+            bottom: 6px;
+            right: -4px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--green);
+            border: 2px solid var(--bg);
+            box-shadow: 0 0 8px var(--green);
+        }
+
+        .profile-info { padding-bottom: 0.5rem; }
+        .profile-username {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+        .profile-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--muted);
+            font-size: 0.78rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .profile-meta span { display: flex; align-items: center; gap: 0.3rem; }
+        .role-badge {
+            background: var(--accent-dim);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        /* ── LAYOUT ── */
+        .page {
+            max-width: 1100px;
+            margin: 2rem auto 4rem;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        /* ── SIDEBAR CARDS ── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        .card-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+        .card-body { padding: 1rem; }
+
+        /* Stats grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        .stat-box {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem;
+            text-align: center;
+        }
+        .stat-number {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            display: block;
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-top: 0.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Wishlist mini list */
+        .mini-list { list-style: none; }
+        .mini-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.82rem;
+        }
+        .mini-list li:last-child { border-bottom: none; }
+        .mini-thumb {
+            width: 40px;
+            height: 26px;
+            border-radius: 3px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .mini-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .mini-thumb-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        .mini-name { color: var(--text); font-weight: 500; flex: 1; }
+        .mini-price { color: var(--green); font-weight: 600; font-size: 0.78rem; }
+
+        /* ── MAIN CONTENT ── */
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Recent games */
+        .recent-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .recent-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            transition: border-color 0.2s, transform 0.15s;
+        }
+        .recent-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        .recent-img {
+            height: 80px;
+            background: var(--surface2);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            font-size: 1.5rem;
+        }
+        .recent-img img { width: 100%; height: 100%; object-fit: cover; }
+        .recent-body { padding: 0.6rem 0.75rem; }
+        .recent-name {
+            font-weight: 600;
+            font-size: 0.82rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0.2rem;
+        }
+        .recent-played {
+            font-size: 0.68rem;
+            color: var(--muted);
+        }
+        .installed-pip {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        /* Reviews */
+        .review-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .review-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.9rem 1rem;
+            display: grid;
+            grid-template-columns: 60px 1fr;
+            gap: 0.75rem;
+            align-items: start;
+            transition: border-color 0.2s;
+        }
+        .review-card:hover { border-color: var(--border); }
+        .review-game-thumb {
+            width: 60px;
+            height: 38px;
+            border-radius: 3px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .review-game-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .review-game-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+        }
+        .review-stars { color: var(--yellow); font-size: 0.8rem; margin-bottom: 0.3rem; }
+        .review-comment { color: var(--muted); font-size: 0.8rem; line-height: 1.5; }
+        .review-recommended {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 0.4rem;
+            color: var(--green);
+        }
+        .review-recommended.no { color: var(--danger); }
+
+        /* Empty states */
+        .empty {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+            font-size: 0.85rem;
+            background: var(--surface);
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+        }
+        .empty a { color: var(--accent); }
+
+        /* Full library link */
+        .view-all {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+            transition: opacity 0.2s;
+        }
+        .view-all:hover { opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <a href="/" class="nav-logo">STEAMUNLA</a>
+    <div class="nav-links">
+        <a href="/games">Tienda</a>
+        <a href="/games/new" th:if="${user != null and user.role == 'DEVELOPER'}">Publicar juego</a>
+        <a href="/library">Biblioteca</a>
+        <a href="/wishlist">Lista de deseados</a>
+    </div>
+    <div class="nav-links" th:if="${user != null}">
+        <a href="/profile" th:text="${user.username}">usuario</a>
+        <a href="/logout">Salir</a>
+    </div>
+    <div class="nav-links" th:if="${user == null}">
+        <a href="/login">Ingresar</a>
+        <a href="/register">Registrarse</a>
+    </div>
+</nav>
+
+<!-- HERO BANNER -->
+<div class="hero">
+    <div class="hero-grid"></div>
+</div>
+
+<!-- PROFILE HEADER -->
+<div class="profile-header">
+    <div class="profile-identity">
+        <div class="avatar-wrap">
+            <div class="avatar" th:text="${#strings.substring(user.username, 0, 1)}">U</div>
+            <div class="avatar-online"></div>
+        </div>
+        <div class="profile-info">
+            <div class="profile-username" th:text="${user.username}">Username</div>
+            <div class="profile-meta">
+                <span>✉ <span th:text="${user.email}">email@example.com</span></span>
+                <span>📅 Miembro desde
+                    <span th:text="${#temporals.format(user.createdAt, 'MMM yyyy')}">Ene 2024</span>
+                </span>
+                <span class="role-badge" th:text="${user.role}">USER</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN PAGE -->
+<div class="page">
+
+    <!-- SIDEBAR -->
+    <aside>
+
+        <!-- Stats -->
+        <div class="card">
+            <div class="card-header">Estadísticas</div>
+            <div class="card-body">
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-number" th:text="${library.size()}">0</span>
+                        <div class="stat-label">Juegos</div>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number" th:text="${installedCount}">0</span>
+                        <div class="stat-label">Instalados</div>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number" th:text="${wishlistCount}">0</span>
+                        <div class="stat-label">En wishlist</div>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number" th:text="${reviews.size()}">0</span>
+                        <div class="stat-label">Reseñas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wishlist -->
+        <div class="card">
+            <div class="card-header">Lista de deseados</div>
+            <div class="card-body" style="padding: 0.5rem 1rem;">
+                <div th:if="${wishlist.empty}" class="empty" style="border: none; padding: 1rem 0;">
+                    <a href="/games">Explorar juegos →</a>
+                </div>
+                <ul class="mini-list" th:unless="${wishlist.empty}">
+                    <li th:each="entry : ${wishlist}">
+                        <div class="mini-thumb">
+                            <img th:if="${entry.game.imageUrl != null}"
+                                 th:src="${entry.game.imageUrl}"
+                                 th:alt="${entry.game.title}">
+                            <div class="mini-thumb-placeholder" th:unless="${entry.game.imageUrl != null}">🎮</div>
+                        </div>
+                        <span class="mini-name" th:text="${entry.game.title}">Juego</span>
+                        <span class="mini-price" th:text="'$' + ${entry.game.price}">$0</span>
+                    </li>
+                </ul>
+                <a href="/wishlist" class="view-all" th:unless="${wishlist.empty}">
+                    Ver todos →
+                </a>
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main>
+
+        <!-- Juegos recientes -->
+        <div style="margin-bottom: 2rem;">
+            <div class="section-title">Jugados recientemente</div>
+
+            <div th:if="${recentGames.empty}" class="empty">
+                No jugaste ningún juego recientemente.
+                <a href="/library">Ir a la biblioteca →</a>
+            </div>
+
+            <div class="recent-grid" th:unless="${recentGames.empty}">
+                <div class="recent-card" th:each="entry : ${recentGames}">
+                    <div class="recent-img">
+                        <img th:if="${entry.game.imageUrl != null}"
+                             th:src="${entry.game.imageUrl}"
+                             th:alt="${entry.game.title}">
+                        <span th:unless="${entry.game.imageUrl != null}">🎮</span>
+                    </div>
+                    <div class="recent-body">
+                        <div class="recent-name" th:text="${entry.game.title}">Juego</div>
+                        <div class="recent-played">
+                            <span class="installed-pip" th:if="${entry.installed}"></span>
+                            Jugado <span th:text="${#temporals.format(entry.lastPlayed, 'dd MMM')}">hoy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a href="/library" class="view-all" th:unless="${library.empty}">
+                Ver biblioteca completa ({{library.size()}} juegos) →
+            </a>
+            <a href="/library" class="view-all" th:unless="${library.empty}"
+               th:text="'Ver biblioteca completa (' + ${library.size()} + ' juegos) →'">
+            </a>
+        </div>
+
+        <!-- Reseñas -->
+        <div>
+            <div class="section-title">Mis reseñas</div>
+
+            <div th:if="${reviews.empty}" class="empty">
+                Todavía no escribiste ninguna reseña.
+                <a href="/games">Explorá juegos →</a>
+            </div>
+
+            <div class="review-list" th:unless="${reviews.empty}">
+                <div class="review-card" th:each="review : ${reviews}">
+                    <div class="review-game-thumb">
+                        <img th:if="${review.game.imageUrl != null}"
+                             th:src="${review.game.imageUrl}"
+                             th:alt="${review.game.title}">
+                    </div>
+                    <div>
+                        <div class="review-game-name" th:text="${review.game.title}">Juego</div>
+                        <div class="review-stars"
+                             th:text="${'★'.repeat(review.rating) + '☆'.repeat(5 - review.rating)}">
+                            ★★★★☆
+                        </div>
+                        <div class="review-comment"
+                             th:text="${review.comment != null ? review.comment : 'Sin comentario'}">
+                            Comentario
+                        </div>
+                        <div class="review-recommended" th:if="${review.recommended}">
+                            👍 Recomendado
+                        </div>
+                        <div class="review-recommended no" th:unless="${review.recommended}">
+                            👎 No recomendado
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

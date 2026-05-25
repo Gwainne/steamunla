@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.steamunla.steamunla.model.Game;
 import com.steamunla.steamunla.model.User;
 import com.steamunla.steamunla.service.GameService;
+import com.steamunla.steamunla.service.GameUpdateService;
 import com.steamunla.steamunla.service.ReviewService;
 import com.steamunla.steamunla.service.PurchaseService;
 import com.steamunla.steamunla.service.LibraryService;
@@ -30,6 +31,8 @@ import java.util.Map;
 import java.util.HashMap;
 import com.steamunla.steamunla.model.Review;
 import com.steamunla.steamunla.model.Promotion;
+import com.steamunla.steamunla.model.GameUpdate;
+import com.steamunla.steamunla.service.GameUpdateService;
 
 import java.util.stream.Collectors;
 
@@ -57,6 +60,9 @@ public class GameController {
 
     @Autowired
     private RecommendationService recommendationService;
+
+    @Autowired
+    private GameUpdateService gameUpdateService;
 
     private User getLoggedUser(HttpSession session) {
         return (User) session.getAttribute("loggedUser");
@@ -126,6 +132,7 @@ public class GameController {
 
         Game game = gameService.getGameById(id);
         List<Review> reviews = reviewService.getReviewsByGame(game);
+        List<GameUpdate> updates = gameUpdateService.getUpdatesByGame(game);
 
         // Verificar si el usuario tiene el juego en la biblioteca activa
         boolean alreadyOwned = false;
@@ -137,7 +144,8 @@ public class GameController {
         if (user != null) {
             inWishlist = wishlistService.isGameInWishlist(user, game);
         }
-
+        
+        
         model.addAttribute("game", game);
         model.addAttribute("reviews", reviews);
         model.addAttribute("user", user);
@@ -145,7 +153,7 @@ public class GameController {
         model.addAttribute("isInWishlist", inWishlist);
         model.addAttribute("activePromotion", promotionService.getActivePromotion(game).orElse(null));
         model.addAttribute("discountedPrice", promotionService.calculateDiscountedPrice(game));
-
+        model.addAttribute("updates", updates);
         return "games/detail";
     }
 
@@ -155,6 +163,8 @@ public class GameController {
         if (user == null) {
             return "redirect:/login";
         }
+        if (!user.getRole().equals("DEVELOPER")) return "redirect:/games?error=acceso";
+
         List<Game> myGames = gameService.getGamesByPublisher(user);
         model.addAttribute("games", myGames);
         model.addAttribute("user", user);
@@ -169,6 +179,7 @@ public class GameController {
         if (user == null) {
             return "redirect:/login";
         }
+        if (!user.getRole().equals("DEVELOPER")) return "redirect:/games?error=acceso";
 
         if (!model.containsAttribute("game")) {
             model.addAttribute("game", new Game());
@@ -187,18 +198,19 @@ public class GameController {
                               HttpSession session) {
 
         User user = getLoggedUser(session);
+        
 
         if (user == null) {
             return "redirect:/login";
         }
-
+        if (!user.getRole().equals("DEVELOPER")) return "redirect:/games?error=acceso";
         if (bindingResult.hasErrors()) {
             model.addAttribute("game", game);
             model.addAttribute("user", user);
             return "games/new";
         }
 
-        Game savedGame = gameService.publishGame(game);
+        Game savedGame = gameService.publishGame(user, game);
         redirectAttributes.addFlashAttribute("successMessage",
                 "Juego publicado: " + savedGame.getTitle());
 

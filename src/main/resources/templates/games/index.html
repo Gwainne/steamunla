@@ -130,12 +130,12 @@
     <a href="/" class="nav-logo">STEAMUNLA</a>
     <div class="nav-links">
         <a href="/games" class="active">Tienda</a>
-        <a href="/games/new">Publicar juego</a>
+        <a href="/games/new" th:if="${user != null and user.role == 'DEVELOPER'}">Publicar juego</a>
         <a href="/library">Biblioteca</a>
         <a href="/wishlist">Lista de deseados</a>
     </div>
     <div class="nav-links" th:if="${user != null}">
-    <a href="#" th:text="'Hola, ' + ${user.username}">Hola, usuario</a>
+    <a href="/profile" th:text="${user.username}">usuario</a>
     <a href="/logout">Salir</a>
 </div>
 
@@ -160,7 +160,11 @@
     </div>
 
     <div class="notice" th:if="${successMessage}" th:text="${successMessage}"></div>
-
+    <div class="notice" 
+     th:if="${param.error != null}"
+     style="background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.35); color: #fecaca;">
+    No tenés permisos para acceder a esa página.
+    </div>
     <!-- Buscador y filtros de género -->
     <div style="margin-bottom:28px; display:flex; flex-direction:column; gap:16px;">
         <div style="position:relative;">
